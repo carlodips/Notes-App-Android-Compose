@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Notes-Compose</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="hint_optional">Optional</string>
+    <string name="notes">Notes</string>
 </resources>

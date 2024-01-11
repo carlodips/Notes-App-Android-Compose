@@ -1,0 +1,53 @@
+package dev.carlodips.notes_compose.ui.screens.add_edit_note
+
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.carlodips.notes_compose.data.local.entity.Note
+import dev.carlodips.notes_compose.data.local.repository.NoteRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+class AddEditNoteViewModel @Inject constructor(
+    private val repository: NoteRepository,
+    savedStateHandle: SavedStateHandle
+) : ViewModel() {
+
+    private val _uiState =
+        MutableStateFlow(AddEditNoteUiState.DEFAULT)
+    val uiState: StateFlow<AddEditNoteUiState>
+        get() = _uiState.asStateFlow()
+
+    fun onTitleChange(title: String) {
+        _uiState.update {
+            it.copy(title = title)
+        }
+    }
+    fun onBodyChange(body: String) {
+        _uiState.update {
+            it.copy(body = body)
+        }
+    }
+
+    fun onSaveNoteClick() {
+        viewModelScope.launch {
+            repository.insertNote(
+                Note(
+                    noteId = 0,
+                    noteTitle = _uiState.value.title,
+                    noteBody = _uiState.value.body
+                )
+            )
+        }
+
+        _uiState.update {
+            it.copy(isDoneSaving = true)
+        }
+    }
+}
