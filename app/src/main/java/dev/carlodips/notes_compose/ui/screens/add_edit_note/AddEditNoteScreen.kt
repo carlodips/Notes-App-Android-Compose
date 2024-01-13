@@ -97,7 +97,7 @@ fun AddEditNoteScreen(
                     style = MaterialTheme.typography.titleLarge
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),

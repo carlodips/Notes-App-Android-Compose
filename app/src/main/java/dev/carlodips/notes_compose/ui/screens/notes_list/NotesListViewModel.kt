@@ -49,11 +49,16 @@ class NotesListViewModel @Inject constructor(
                 repository.insertNote(it)
             }
         }
+        dismissSnackBar()
     }
 
     fun dismissSnackBar() {
         _uiState.update {
-            NoteListUiState.DEFAULT
+            it.copy(
+                shouldShowSnackBar = false,
+                snackBarMessage = "",
+                snackBarActionLabel = ""
+            )
         }
     }
 }

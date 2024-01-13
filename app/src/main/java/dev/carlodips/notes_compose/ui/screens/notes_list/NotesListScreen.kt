@@ -41,8 +41,7 @@ fun NotesListScreen(
 
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
-
-    LaunchedEffect(key1 = uiState.value.shouldShowSnackBar) {
+    LaunchedEffect(uiState.value.shouldShowSnackBar) {
         if (uiState.value.shouldShowSnackBar) {
             val snackBarResult = snackBarHostState.showSnackbar(
                 message = uiState.value.snackBarMessage,
