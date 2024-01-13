@@ -49,6 +49,7 @@ class AddEditNoteViewModel @Inject constructor(
             it.copy(title = title)
         }
     }
+
     fun onBodyChange(body: String) {
         _uiState.update {
             it.copy(body = body)
@@ -62,18 +63,38 @@ class AddEditNoteViewModel @Inject constructor(
     }
 
     fun onSaveNoteClick() {
+        if (uiState.value.title.isBlank() || uiState.value.body.isBlank()) {
+            _uiState.update {
+                it.copy(
+                    isError = true,
+                    errorMessage = "Fields cannot be empty"
+                )
+            }
+
+            return
+        }
+
         viewModelScope.launch {
             repository.insertNote(
                 Note(
-                    noteId = _uiState.value.noteId,
-                    noteTitle = _uiState.value.title,
-                    noteBody = _uiState.value.body
+                    noteId = uiState.value.noteId,
+                    noteTitle = uiState.value.title,
+                    noteBody = uiState.value.body
                 )
             )
-        }
 
+            _uiState.update {
+                it.copy(isDoneSaving = true)
+            }
+        }
+    }
+
+    fun dismissSnackBar() {
         _uiState.update {
-            it.copy(isDoneSaving = true)
+            it.copy(
+                isError = false,
+                errorMessage = ""
+            )
         }
     }
 }
