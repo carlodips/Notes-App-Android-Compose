@@ -95,19 +95,32 @@ fun NotesListScreen(
                     Spacer(modifier = Modifier.height(8.dp))
                 }
 
-                items(notesList.value) { note ->
-                    NoteItem(
-                        note = note,
-                        onEditClick = {
-                            onNavigateToAddEdit.invoke(
-                                NavigationItem.AddEditNote.route + "?noteId=${note.noteId}"
-                            )
-                        },
-                        onDeleteClick = {
-                            viewModel.onDeleteNoteClick(note)
-                        }
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
+                if (notesList.value.isEmpty()) {
+                    item {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            modifier = Modifier.padding(
+                                horizontal = 16.dp
+                            ),
+                            text = stringResource(R.string.msg_no_notes_added),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+                } else {
+                    items(notesList.value) { note ->
+                        NoteItem(
+                            note = note,
+                            onEditClick = {
+                                onNavigateToAddEdit.invoke(
+                                    NavigationItem.AddEditNote.route + "?noteId=${note.noteId}"
+                                )
+                            },
+                            onDeleteClick = {
+                                viewModel.onDeleteNoteClick(note)
+                            }
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                    }
                 }
             }
         }

@@ -5,6 +5,7 @@
     <string name="hint_optional">Optional</string>
     <string name="notes">Notes</string>
     <string name="add_note">Add Note</string>
+    <string name="edit">Edit</string>
     <string name="edit_note">Edit Note</string>
     <string name="delete">Delete</string>
     <string name="delete_this_note">Delete this note?</string>
@@ -12,4 +13,6 @@
     <string name="yes">Yes</string>
     <string name="undo">Undo</string>
     <string name="note_deleted">Note deleted</string>
+    <string name="msg_fields_empty">Fields cannot be empty</string>
+    <string name="msg_no_notes_added">No notes added yet.</string>
 </resources>

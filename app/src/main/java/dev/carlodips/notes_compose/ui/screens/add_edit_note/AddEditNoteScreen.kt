@@ -86,7 +86,7 @@ fun AddEditNoteScreen(
 
                 Text(
                     text = if (uiState.value.isEdit) {
-                        stringResource(id = R.string.edit_note)
+                        stringResource(id = R.string.edit)
                     } else {
                         stringResource(id = R.string.add_note)
                     },

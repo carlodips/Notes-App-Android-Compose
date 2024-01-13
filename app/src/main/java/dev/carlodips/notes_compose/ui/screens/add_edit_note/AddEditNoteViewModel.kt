@@ -1,9 +1,11 @@
 package dev.carlodips.notes_compose.ui.screens.add_edit_note
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.carlodips.notes_compose.R
 import dev.carlodips.notes_compose.data.local.entity.Note
 import dev.carlodips.notes_compose.data.local.repository.NoteRepository
 import dev.carlodips.notes_compose.utils.NavigationItem
@@ -16,9 +18,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddEditNoteViewModel @Inject constructor(
+    private val app: Application,
     private val repository: NoteRepository,
     savedStateHandle: SavedStateHandle
-) : ViewModel() {
+) : AndroidViewModel(app) {
 
     private val _uiState =
         MutableStateFlow(AddEditNoteUiState.DEFAULT)
@@ -67,10 +70,9 @@ class AddEditNoteViewModel @Inject constructor(
             _uiState.update {
                 it.copy(
                     isError = true,
-                    errorMessage = "Fields cannot be empty"
+                    errorMessage = app.getString(R.string.msg_fields_empty)
                 )
             }
-
             return
         }
 
