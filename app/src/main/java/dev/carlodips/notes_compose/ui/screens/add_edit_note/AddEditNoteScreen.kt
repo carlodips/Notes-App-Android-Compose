@@ -76,19 +76,22 @@ fun AddEditNoteScreen(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 OutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
                     value = uiState.value.title,
                     onValueChange = {
                         viewModel.onTitleChange(it)
                     },
                     placeholder = {
                         Text(text = stringResource(R.string.title))
-                    },
-                    modifier = Modifier.fillMaxWidth()
+                    }
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
                 OutlinedTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(150.dp),
                     value = uiState.value.body,
                     onValueChange = {
                         viewModel.onBodyChange(it)
@@ -96,9 +99,7 @@ fun AddEditNoteScreen(
                     placeholder = {
                         Text(text = stringResource(R.string.description))
                     },
-                    modifier = Modifier.fillMaxWidth(),
                     singleLine = false,
-                    maxLines = 5
                 )
             }
         }
