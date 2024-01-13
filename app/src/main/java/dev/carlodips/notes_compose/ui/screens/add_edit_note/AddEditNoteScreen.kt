@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.FloatingActionButton
@@ -35,6 +37,8 @@ fun AddEditNoteScreen(
     LaunchedEffect(uiState.value.isDoneSaving) {
         if (uiState.value.isDoneSaving) {
             onPopBackStack.invoke()
+            // uiState.value.isDoneSaving does not need to reset to false since
+            // this vm will be destroyed anyways after popBackStack
         }
     }
 
@@ -56,8 +60,20 @@ fun AddEditNoteScreen(
                     .fillMaxSize()
                     .padding(innerPadding)
                     .padding(horizontal = 16.dp)
+                    .verticalScroll(rememberScrollState()),
             ) {
                 Spacer(modifier = Modifier.height(24.dp))
+
+                Text(
+                    text = if (uiState.value.isEdit) {
+                        stringResource(id = R.string.edit_note)
+                    } else {
+                        stringResource(id = R.string.add_note)
+                    },
+                    style = MaterialTheme.typography.titleLarge
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
 
                 OutlinedTextField(
                     value = uiState.value.title,

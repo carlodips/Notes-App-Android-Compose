@@ -22,9 +22,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.carlodips.notes_compose.R
-import dev.carlodips.notes_compose.Screens
 import dev.carlodips.notes_compose.data.local.entity.Note
 import dev.carlodips.notes_compose.ui.component.BaseCard
+import dev.carlodips.notes_compose.utils.NavigationItem
 
 @Composable
 fun NotesListScreen(
@@ -35,12 +35,13 @@ fun NotesListScreen(
     val notesList = viewModel.notesList.collectAsState(initial = emptyList())
 
     Surface(
-        modifier = modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
+        modifier = modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
     ) {
         Scaffold(
             floatingActionButton = {
                 FloatingActionButton(onClick = {
-                    onNavigateToAddEdit.invoke(Screens.AddEditNote.route)
+                    onNavigateToAddEdit.invoke(NavigationItem.AddEditNote.route)
                 }) {
                     Icon(Icons.Filled.Add, null)
                 }
@@ -64,7 +65,14 @@ fun NotesListScreen(
                 }
 
                 items(notesList.value) { note ->
-                    NoteItem(note = note)
+                    NoteItem(
+                        note = note,
+                        onNoteClick = {
+                            onNavigateToAddEdit.invoke(
+                                NavigationItem.AddEditNote.route + "?noteId=${note.noteId}"
+                            )
+                        }
+                    )
                     Spacer(modifier = Modifier.height(12.dp))
                 }
             }
@@ -75,9 +83,14 @@ fun NotesListScreen(
 @Composable
 fun NoteItem(
     modifier: Modifier = Modifier,
-    note: Note
+    note: Note,
+    onNoteClick: () -> Unit
 ) {
-    BaseCard(modifier = Modifier.padding(horizontal = 16.dp)) {
+    BaseCard(
+        modifier = Modifier.padding(horizontal = 16.dp),
+        onClick = onNoteClick,
+        isEnabled = true
+    ) {
         Column(
             modifier = modifier.padding(
                 horizontal = 16.dp,

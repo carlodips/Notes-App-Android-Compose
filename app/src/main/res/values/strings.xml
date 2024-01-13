@@ -4,4 +4,6 @@
     <string name="description">Description</string>
     <string name="hint_optional">Optional</string>
     <string name="notes">Notes</string>
+    <string name="add_note">Add Note</string>
+    <string name="edit_note">Edit Note</string>
 </resources>
