@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
@@ -93,7 +92,7 @@ fun NoteItem(
                             text = {
                                 Text(
                                     style = MaterialTheme.typography.bodyMedium,
-                                    text = stringResource(id = R.string.edit_note)
+                                    text = stringResource(id = R.string.edit)
                                 )
                             },
                             onClick = {
@@ -141,11 +140,11 @@ fun DeleteEntryDialog(
                 Column(modifier = Modifier.padding(20.dp)) {
                     Text(
                         text = stringResource(id = R.string.delete),
-                        style = MaterialTheme.typography.bodyLarge,
+                        style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold
                     )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
                         text = stringResource(R.string.delete_this_note),
@@ -169,8 +168,6 @@ fun DeleteEntryDialog(
                             text = stringResource(R.string.no),
                             textAlign = TextAlign.Center
                         )
-
-                        Spacer(modifier = Modifier.width(16.dp))
 
                         Text(
                             modifier = Modifier

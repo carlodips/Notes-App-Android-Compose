@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -25,6 +26,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -86,7 +90,7 @@ fun AddEditNoteScreen(
 
                 Text(
                     text = if (uiState.value.isEdit) {
-                        stringResource(id = R.string.edit)
+                        stringResource(id = R.string.edit_note)
                     } else {
                         stringResource(id = R.string.add_note)
                     },
@@ -103,7 +107,13 @@ fun AddEditNoteScreen(
                     },
                     placeholder = {
                         Text(text = stringResource(R.string.title))
-                    }
+                    },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(
+                        capitalization = KeyboardCapitalization.Sentences,
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next
+                    )
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -119,7 +129,11 @@ fun AddEditNoteScreen(
                     placeholder = {
                         Text(text = stringResource(R.string.description))
                     },
-                    singleLine = false,
+                    keyboardOptions = KeyboardOptions(
+                        capitalization = KeyboardCapitalization.Sentences,
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Default
+                    )
                 )
             }
         }
