@@ -1,5 +1,7 @@
 package dev.carlodips.notes_compose.ui.screens.add_edit_note
 
+import androidx.annotation.StringRes
+
 data class AddEditNoteUiState(
     val noteId: Int, // For edit
     val title: String,
@@ -7,7 +9,7 @@ data class AddEditNoteUiState(
     val isDoneSaving: Boolean,
     val isEdit: Boolean,
     val isError: Boolean,
-    val errorMessage: String
+    @StringRes val errorMessage: Int
 ) {
     companion object {
         val DEFAULT = AddEditNoteUiState(
@@ -17,7 +19,7 @@ data class AddEditNoteUiState(
             isDoneSaving = false,
             isEdit = false,
             isError = false,
-            errorMessage = ""
+            errorMessage = -1
         )
     }
 }

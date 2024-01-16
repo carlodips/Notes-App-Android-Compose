@@ -1,8 +1,7 @@
 package dev.carlodips.notes_compose.ui.screens.add_edit_note
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.carlodips.notes_compose.R
@@ -18,10 +17,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddEditNoteViewModel @Inject constructor(
-    private val app: Application,
     private val repository: NoteRepository,
     savedStateHandle: SavedStateHandle
-) : AndroidViewModel(app) {
+) : ViewModel() {
 
     private val _uiState =
         MutableStateFlow(AddEditNoteUiState.DEFAULT)
@@ -59,18 +57,18 @@ class AddEditNoteViewModel @Inject constructor(
         }
     }
 
-    fun onDoneSaving() {
+    /*fun onDoneSaving() {
         _uiState.update {
             it.copy(isDoneSaving = false)
         }
-    }
+    }*/
 
     fun onSaveNoteClick() {
         if (uiState.value.title.isBlank() || uiState.value.body.isBlank()) {
             _uiState.update {
                 it.copy(
                     isError = true,
-                    errorMessage = app.getString(R.string.msg_fields_empty)
+                    errorMessage = R.string.msg_fields_empty
                 )
             }
             return
@@ -95,7 +93,7 @@ class AddEditNoteViewModel @Inject constructor(
         _uiState.update {
             it.copy(
                 isError = false,
-                errorMessage = ""
+                errorMessage = -1
             )
         }
     }

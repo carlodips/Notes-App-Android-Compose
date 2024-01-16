@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -43,6 +44,8 @@ fun AddEditNoteScreen(
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarHostState = remember { SnackbarHostState() }
 
+    val context = LocalContext.current
+
     LaunchedEffect(uiState.value.isDoneSaving) {
         if (uiState.value.isDoneSaving) {
             onPopBackStack.invoke()
@@ -54,7 +57,7 @@ fun AddEditNoteScreen(
     LaunchedEffect(uiState.value.isError) {
         if (uiState.value.isError) {
             val snackBarResult = snackBarHostState.showSnackbar(
-                message = uiState.value.errorMessage
+                message = context.getString(uiState.value.errorMessage)
             )
 
             if (snackBarResult == SnackbarResult.Dismissed) {
