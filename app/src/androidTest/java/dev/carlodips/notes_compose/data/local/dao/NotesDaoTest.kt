@@ -1,10 +1,9 @@
 package dev.carlodips.notes_compose.data.local.dao
 
-import androidx.room.Room
-import androidx.test.core.app.ApplicationProvider
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import com.google.common.truth.Truth.assertThat
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import dev.carlodips.notes_compose.data.local.NotesDatabase
 import dev.carlodips.notes_compose.data.local.entity.Note
 import kotlinx.coroutines.Dispatchers
@@ -14,23 +13,31 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 import java.util.concurrent.CountDownLatch
+import javax.inject.Inject
+import javax.inject.Named
 
-@RunWith(AndroidJUnit4::class)
 @SmallTest
+@HiltAndroidTest
 class NotesDaoTest {
-    private lateinit var database: NotesDatabase
+    @Inject
+    @Named("test_db") //Added named since there is also database from main
+    lateinit var database: NotesDatabase
+
     private lateinit var dao: NotesDao
+
+    @get:Rule
+    var hiltRule = HiltAndroidRule(this)
 
     @Before
     fun setup() {
-        database = Room.inMemoryDatabaseBuilder(
+        /*database = Room.inMemoryDatabaseBuilder(
             ApplicationProvider.getApplicationContext(),
             NotesDatabase::class.java
-        ).allowMainThreadQueries().build()
-
+        ).allowMainThreadQueries().build()*/
+        hiltRule.inject()
         dao = database.dao
     }
 
