@@ -1,9 +1,8 @@
 # Notes App in Android Jetpack Compose
-A simple app where you can perform CRUD operations. This app demonstrates the use of Clean architecture principles. This app was developed using MVVM, Dagger-Hilt dependency injection, Room database, Kotlin coroutines and flows, Material design and other Android development technologies.
+A simple app where you can perform CRUD operations. This app demonstrates the use of Jetpack compose with MVVM. This app also implements Dagger-Hilt dependency injection, Room database, Kotlin coroutines and flows, Material design and other Android development technologies.
 
 ## Built with
 - Kotlin
-- Clean architecture principles
 - MVVM
 - Jetpack Compose
 - Dagger-Hilt dependency injection
