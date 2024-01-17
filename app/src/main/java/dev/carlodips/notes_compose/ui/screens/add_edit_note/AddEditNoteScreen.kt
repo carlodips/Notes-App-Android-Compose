@@ -1,5 +1,6 @@
 package dev.carlodips.notes_compose.ui.screens.add_edit_note
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,16 +10,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,31 +34,27 @@ import dev.carlodips.notes_compose.R
 @Composable
 fun AddEditNoteScreen(
     modifier: Modifier = Modifier,
-    onPopBackStack: () -> Unit,
+    onPopBackStack: (message: String?) -> Unit,
     viewModel: AddEditNoteViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarHostState = remember { SnackbarHostState() }
-
     val context = LocalContext.current
+
+    // Call onSaveNote when back button is triggered
+    BackHandler(enabled = true) {
+        viewModel.onSaveNote()
+    }
 
     LaunchedEffect(uiState.value.isDoneSaving) {
         if (uiState.value.isDoneSaving) {
-            onPopBackStack.invoke()
+            val message = if (uiState.value.message != -1) {
+                context.getString(uiState.value.message)
+            } else ""
+
+            onPopBackStack.invoke(message)
             // uiState.value.isDoneSaving does not need to reset to false since
             // this vm will be destroyed anyways after popBackStack
-        }
-    }
-
-    LaunchedEffect(uiState.value.isError) {
-        if (uiState.value.isError) {
-            val snackBarResult = snackBarHostState.showSnackbar(
-                message = context.getString(uiState.value.errorMessage)
-            )
-
-            if (snackBarResult == SnackbarResult.Dismissed) {
-                viewModel.dismissSnackBar()
-            }
         }
     }
 
@@ -73,13 +65,6 @@ fun AddEditNoteScreen(
         Scaffold(
             snackbarHost = {
                 SnackbarHost(hostState = snackBarHostState)
-            },
-            floatingActionButton = {
-                FloatingActionButton(onClick = {
-                    viewModel.onSaveNoteClick()
-                }) {
-                    Icon(Icons.Filled.Check, "Save")
-                }
             },
         ) { innerPadding ->
             Column(

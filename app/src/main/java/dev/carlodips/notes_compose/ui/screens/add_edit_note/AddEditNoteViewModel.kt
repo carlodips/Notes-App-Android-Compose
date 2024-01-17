@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.carlodips.notes_compose.R
 import dev.carlodips.notes_compose.data.local.entity.Note
-import dev.carlodips.notes_compose.data.local.repository.NoteRepository
+import dev.carlodips.notes_compose.domain.repository.NoteRepository
 import dev.carlodips.notes_compose.utils.NavigationItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -63,12 +63,13 @@ class AddEditNoteViewModel @Inject constructor(
         }
     }
 
-    fun onSaveNoteClick() {
-        if (uiState.value.title.isBlank() || uiState.value.body.isBlank()) {
+    fun onSaveNote() {
+        if (uiState.value.title.isBlank() && uiState.value.body.isBlank()) {
             _uiState.update {
                 it.copy(
                     isError = true,
-                    errorMessage = R.string.msg_fields_empty
+                    message = R.string.msg_note_discarded,
+                    isDoneSaving = true
                 )
             }
             return
@@ -86,15 +87,6 @@ class AddEditNoteViewModel @Inject constructor(
             _uiState.update {
                 it.copy(isDoneSaving = true)
             }
-        }
-    }
-
-    fun dismissSnackBar() {
-        _uiState.update {
-            it.copy(
-                isError = false,
-                errorMessage = -1
-            )
         }
     }
 }

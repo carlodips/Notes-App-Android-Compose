@@ -3,7 +3,6 @@ package dev.carlodips.notes_compose.ui.screens.add_edit_note
 import androidx.lifecycle.SavedStateHandle
 import com.google.common.truth.Truth.assertThat
 import dev.carlodips.notes_compose.MainDispatcherRule
-import dev.carlodips.notes_compose.R
 import dev.carlodips.notes_compose.data.local.repository.FakeNoteRepository
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -11,7 +10,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito
-
 
 class AddEditNoteViewModelTest {
 
@@ -36,7 +34,7 @@ class AddEditNoteViewModelTest {
     @Test
     fun `onSaveNoteClick() while title and body are blank, returns isError = true`() =
         runTest {
-            viewModel.onSaveNoteClick()
+            viewModel.onSaveNote()
 
             val uiState = viewModel.uiState
 
@@ -44,21 +42,21 @@ class AddEditNoteViewModelTest {
         }
 
     @Test
-    fun `onSaveNoteClick() while title is not blank and body is blank, returns isError = true`() =
+    fun `onSaveNoteClick() while title is not blank and body is blank, returns isError = false`() =
         runTest {
             viewModel.onTitleChange("title")
-            viewModel.onSaveNoteClick()
+            viewModel.onSaveNote()
 
-            assertThat(viewModel.uiState.value.isError).isTrue()
+            assertThat(!viewModel.uiState.value.isError).isTrue()
         }
 
     @Test
-    fun `onSaveNoteClick() while title is blank and body is not blank, returns isError = true`() =
+    fun `onSaveNoteClick() while title is blank and body is not blank, returns isError = false`() =
         runTest {
             viewModel.onBodyChange("body")
-            viewModel.onSaveNoteClick()
+            viewModel.onSaveNote()
 
-            assertThat(viewModel.uiState.value.isError).isTrue()
+            assertThat(!viewModel.uiState.value.isError).isTrue()
         }
 
     @Test
@@ -67,20 +65,20 @@ class AddEditNoteViewModelTest {
             viewModel.onTitleChange("title")
             viewModel.onBodyChange("body")
 
-            viewModel.onSaveNoteClick()
+            viewModel.onSaveNote()
 
             assertThat(viewModel.uiState.value.isError).isFalse()
         }
 
     @Test
-    fun `onSaveNoteClick() while title or body is blank, returns errorMessage == msg_fields_empty`() =
+    fun `onSaveNoteClick() while title or body is blank, returns errorMessage == -1`() =
         runTest {
             viewModel.onTitleChange("title")
             viewModel.onBodyChange(" ")
 
-            viewModel.onSaveNoteClick()
+            viewModel.onSaveNote()
 
-            assertThat(viewModel.uiState.value.errorMessage == R.string.msg_fields_empty).isTrue()
+            assertThat(viewModel.uiState.value.message == -1).isTrue()
         }
 
     @Test
@@ -89,9 +87,9 @@ class AddEditNoteViewModelTest {
             viewModel.onTitleChange("title")
             viewModel.onBodyChange("body")
 
-            viewModel.onSaveNoteClick()
+            viewModel.onSaveNote()
 
-            assertThat(viewModel.uiState.value.errorMessage == -1).isTrue()
+            assertThat(viewModel.uiState.value.message == -1).isTrue()
         }
 
     @Test
@@ -100,7 +98,7 @@ class AddEditNoteViewModelTest {
             viewModel.onTitleChange("title")
             viewModel.onBodyChange("body")
 
-            viewModel.onSaveNoteClick()
+            viewModel.onSaveNote()
 
             assertThat(viewModel.uiState.value.isDoneSaving).isTrue()
         }
@@ -113,7 +111,7 @@ class AddEditNoteViewModelTest {
         viewModel.onTitleChange(title)
         viewModel.onBodyChange(body)
 
-        viewModel.onSaveNoteClick()
+        viewModel.onSaveNote()
 
         val addedNote = repository.getNotes().first().first()
 

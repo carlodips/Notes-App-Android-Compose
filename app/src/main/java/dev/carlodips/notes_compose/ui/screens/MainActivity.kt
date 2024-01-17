@@ -25,22 +25,35 @@ class MainActivity : ComponentActivity() {
                     navController = navController,
                     startDestination = NavigationItem.NotesList.route
                 ) {
-                    composable(NavigationItem.NotesList.route) {
-                        NotesListScreen(onNavigateToAddEdit = {
-                            navController.navigate(it)
-                        })
+                    composable(NavigationItem.NotesList.route) { entry ->
+                        val messageFromAddEditScreen = entry.savedStateHandle.get<String>(
+                            NavigationItem.NotesList.MESSAGE
+                        ) ?: ""
+
+                        NotesListScreen(
+                            messageFromAddEdit = messageFromAddEditScreen,
+                            onNavigateToAddEdit = {
+                                navController.navigate(it)
+                            }
+                        )
                     }
 
                     composable(
-                        route = NavigationItem.AddEditNote.route + "?noteId={noteId}",
+                        route = NavigationItem.AddEditNote.route +
+                                "?noteId={${NavigationItem.AddEditNote.NOTE_ID}}",
                         arguments = listOf(
-                            navArgument("noteId") {
+                            navArgument(NavigationItem.AddEditNote.NOTE_ID) {
                                 type = NavType.IntType
                                 defaultValue = -1
                             }
                         )
                     ) {
-                        AddEditNoteScreen(onPopBackStack = {
+                        AddEditNoteScreen(onPopBackStack = { messageForSnackBar ->
+                            // For displaying messages for Snackbar
+                            navController.previousBackStackEntry?.savedStateHandle?.set(
+                                NavigationItem.NotesList.MESSAGE,
+                                messageForSnackBar
+                            )
                             navController.popBackStack()
                         })
                     }

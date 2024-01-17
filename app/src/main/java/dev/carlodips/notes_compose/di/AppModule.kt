@@ -7,7 +7,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dev.carlodips.notes_compose.data.local.NotesDatabase
-import dev.carlodips.notes_compose.data.local.repository.NoteRepository
+import dev.carlodips.notes_compose.domain.repository.NoteRepository
 import dev.carlodips.notes_compose.data.local.repository.NotesRepositoryImpl
 import javax.inject.Singleton
 
@@ -26,7 +26,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideTodoRepository(database: NotesDatabase): NoteRepository {
+    fun provideNoteRepository(database: NotesDatabase): NoteRepository {
         return NotesRepositoryImpl(database.dao)
     }
 }

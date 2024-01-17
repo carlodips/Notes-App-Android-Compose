@@ -9,7 +9,7 @@ data class AddEditNoteUiState(
     val isDoneSaving: Boolean,
     val isEdit: Boolean,
     val isError: Boolean,
-    @StringRes val errorMessage: Int
+    @StringRes val message: Int
 ) {
     companion object {
         val DEFAULT = AddEditNoteUiState(
@@ -19,7 +19,7 @@ data class AddEditNoteUiState(
             isDoneSaving = false,
             isEdit = false,
             isError = false,
-            errorMessage = -1
+            message = -1
         )
     }
 }

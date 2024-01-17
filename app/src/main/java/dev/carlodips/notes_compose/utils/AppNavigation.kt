@@ -1,12 +1,10 @@
 package dev.carlodips.notes_compose.utils
 
-enum class Screen {
-    NotesList,
-    AddEditNote,
-}
 sealed class NavigationItem(val route: String) {
-    object NotesList : NavigationItem(Screen.NotesList.name)
-    object AddEditNote : NavigationItem(Screen.AddEditNote.name) {
+    data object NotesList : NavigationItem("notes_list") {
+        const val MESSAGE = "message"
+    }
+    data object AddEditNote : NavigationItem("add_edit") {
         const val NOTE_ID = "noteId"
     }
 }

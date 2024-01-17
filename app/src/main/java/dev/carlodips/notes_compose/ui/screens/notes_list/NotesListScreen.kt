@@ -34,6 +34,7 @@ import dev.carlodips.notes_compose.utils.NavigationItem
 fun NotesListScreen(
     modifier: Modifier = Modifier,
     viewModel: NotesListViewModel = hiltViewModel(),
+    messageFromAddEdit: String,
     onNavigateToAddEdit: (route: String) -> Unit
 ) {
     val notesList = viewModel.notesList.collectAsState(initial = emptyList())
@@ -41,12 +42,18 @@ fun NotesListScreen(
 
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
+    LaunchedEffect(messageFromAddEdit) {
+        if (messageFromAddEdit.isNotEmpty()) {
+            viewModel.showSnackbar(messageFromAddEdit)
+        }
+    }
+
     LaunchedEffect(uiState.value.shouldShowSnackBar) {
         if (uiState.value.shouldShowSnackBar) {
             val snackBarResult = snackBarHostState.showSnackbar(
-                message = uiState.value.snackBarMessage,
-                actionLabel = uiState.value.snackBarActionLabel,
-                duration = SnackbarDuration.Long
+                message = uiState.value.snackbarMessage,
+                actionLabel = uiState.value.snackbarActionLabel,
+                duration = SnackbarDuration.Short
             )
 
             when (snackBarResult) {
@@ -55,7 +62,7 @@ fun NotesListScreen(
                 }
 
                 SnackbarResult.Dismissed -> {
-                    viewModel.dismissSnackBar()
+                    viewModel.dismissSnackbar()
                 }
             }
         }

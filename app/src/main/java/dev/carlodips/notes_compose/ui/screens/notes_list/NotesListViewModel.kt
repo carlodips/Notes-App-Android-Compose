@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.carlodips.notes_compose.R
 import dev.carlodips.notes_compose.data.local.entity.Note
-import dev.carlodips.notes_compose.data.local.repository.NoteRepository
+import dev.carlodips.notes_compose.domain.repository.NoteRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,8 +23,8 @@ class NotesListViewModel @Inject constructor(
     val notesList = repository.getNotes()
 
     private val _uiState =
-        MutableStateFlow(NoteListUiState.DEFAULT)
-    val uiState: StateFlow<NoteListUiState>
+        MutableStateFlow(NotesListUiState.DEFAULT)
+    val uiState: StateFlow<NotesListUiState>
         get() = _uiState.asStateFlow()
 
     private var deletedNote: Note? = null
@@ -33,13 +33,10 @@ class NotesListViewModel @Inject constructor(
         viewModelScope.launch {
             deletedNote = note
             repository.deleteNote(note)
-            _uiState.update {
-                it.copy(
-                    shouldShowSnackBar = true,
-                    snackBarMessage = app.getString(R.string.note_deleted),
-                    snackBarActionLabel = app.getString(R.string.undo)
-                )
-            }
+            showSnackbar(
+                snackbarMessage = app.getString(R.string.note_deleted),
+                snackbarActionLabel = app.getString(R.string.undo)
+            )
         }
     }
 
@@ -49,15 +46,25 @@ class NotesListViewModel @Inject constructor(
                 repository.insertNote(it)
             }
         }
-        dismissSnackBar()
+        dismissSnackbar()
     }
 
-    fun dismissSnackBar() {
+    fun showSnackbar(snackbarMessage: String, snackbarActionLabel: String = "") {
+        _uiState.update {
+            it.copy(
+                shouldShowSnackBar = true,
+                snackbarMessage = snackbarMessage,
+                snackbarActionLabel = snackbarActionLabel
+            )
+        }
+    }
+
+    fun dismissSnackbar() {
         _uiState.update {
             it.copy(
                 shouldShowSnackBar = false,
-                snackBarMessage = "",
-                snackBarActionLabel = ""
+                snackbarMessage = "",
+                snackbarActionLabel = ""
             )
         }
     }

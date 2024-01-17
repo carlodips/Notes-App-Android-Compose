@@ -13,6 +13,6 @@
     <string name="yes">Yes</string>
     <string name="undo">Undo</string>
     <string name="note_deleted">Note deleted</string>
-    <string name="msg_fields_empty">Fields cannot be empty</string>
+    <string name="msg_note_discarded">Note discarded</string>
     <string name="msg_no_notes_added">No notes added yet.</string>
 </resources>
