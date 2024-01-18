@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Notes-Compose</string>
     <string name="title">Title</string>
-    <string name="description">Description</string>
+    <string name="description">Add note here</string>
     <string name="hint_optional">Optional</string>
     <string name="notes">Notes</string>
     <string name="add_note">Add Note</string>
@@ -15,4 +15,5 @@
     <string name="note_deleted">Note deleted</string>
     <string name="msg_note_discarded">Note discarded</string>
     <string name="msg_no_notes_added">No notes added yet.</string>
+    <string name="save">Save</string>
 </resources>

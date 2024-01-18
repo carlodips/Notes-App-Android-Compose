@@ -5,7 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import dev.carlodips.notes_compose.data.local.entity.Note
+import dev.carlodips.notes_compose.domain.model.Note
 import kotlinx.coroutines.flow.Flow
 
 @Dao

@@ -32,46 +32,46 @@ class AddEditNoteViewModelTest {
     }
 
     @Test
-    fun `onSaveNoteClick() while title and body are blank, returns isError = true`() =
+    fun `onSaveNoteClick() while title and body are blank, returns hasMessage = true`() =
         runTest {
             viewModel.onSaveNote()
 
             val uiState = viewModel.uiState
 
-            assertThat(uiState.value.isError).isTrue()
+            assertThat(uiState.value.hasMessage).isTrue()
         }
 
     @Test
-    fun `onSaveNoteClick() while title is not blank and body is blank, returns isError = false`() =
+    fun `onSaveNoteClick() while title is not blank and body is blank, returns hasMessage = false`() =
         runTest {
             viewModel.onTitleChange("title")
             viewModel.onSaveNote()
 
-            assertThat(!viewModel.uiState.value.isError).isTrue()
+            assertThat(!viewModel.uiState.value.hasMessage).isTrue()
         }
 
     @Test
-    fun `onSaveNoteClick() while title is blank and body is not blank, returns isError = false`() =
+    fun `onSaveNoteClick() while title is blank and body is not blank, returns hasMessage = false`() =
         runTest {
             viewModel.onBodyChange("body")
             viewModel.onSaveNote()
 
-            assertThat(!viewModel.uiState.value.isError).isTrue()
+            assertThat(!viewModel.uiState.value.hasMessage).isTrue()
         }
 
     @Test
-    fun `onSaveNoteClick() while title and body are not blank, returns isError = false`() =
+    fun `onSaveNoteClick() while title and body are not blank, returns hasMessage = false`() =
         runTest {
             viewModel.onTitleChange("title")
             viewModel.onBodyChange("body")
 
             viewModel.onSaveNote()
 
-            assertThat(viewModel.uiState.value.isError).isFalse()
+            assertThat(viewModel.uiState.value.hasMessage).isFalse()
         }
 
     @Test
-    fun `onSaveNoteClick() while title or body is blank, returns errorMessage == -1`() =
+    fun `onSaveNoteClick() while title or body is blank, returns message == -1`() =
         runTest {
             viewModel.onTitleChange("title")
             viewModel.onBodyChange(" ")
@@ -82,7 +82,7 @@ class AddEditNoteViewModelTest {
         }
 
     @Test
-    fun `onSaveNoteClick() while title and body is not blank, returns errorMessage == -1`() =
+    fun `onSaveNoteClick() while title and body is not blank, returns message == -1`() =
         runTest {
             viewModel.onTitleChange("title")
             viewModel.onBodyChange("body")

@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.carlodips.notes_compose.R
-import dev.carlodips.notes_compose.data.local.entity.Note
+import dev.carlodips.notes_compose.domain.model.Note
 import dev.carlodips.notes_compose.domain.repository.NoteRepository
 import dev.carlodips.notes_compose.utils.NavigationItem
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,12 +27,15 @@ class AddEditNoteViewModel @Inject constructor(
     val uiState: StateFlow<AddEditNoteUiState>
         get() = _uiState.asStateFlow()
 
+    private var dateAdded: LocalDateTime? = null // For edit
+
     init {
         val noteId = savedStateHandle.get<Int>(NavigationItem.AddEditNote.NOTE_ID) ?: -1
 
         if (noteId != -1) {
             viewModelScope.launch {
                 repository.getNoteById(noteId)?.let { note ->
+                    dateAdded = note.dateAdded
                     _uiState.update {
                         it.copy(
                             noteId = note.noteId,
@@ -67,7 +71,7 @@ class AddEditNoteViewModel @Inject constructor(
         if (uiState.value.title.isBlank() && uiState.value.body.isBlank()) {
             _uiState.update {
                 it.copy(
-                    isError = true,
+                    hasMessage = true,
                     message = R.string.msg_note_discarded,
                     isDoneSaving = true
                 )
@@ -80,7 +84,9 @@ class AddEditNoteViewModel @Inject constructor(
                 Note(
                     noteId = uiState.value.noteId,
                     noteTitle = uiState.value.title,
-                    noteBody = uiState.value.body
+                    noteBody = uiState.value.body,
+                    dateAdded = dateAdded ?: LocalDateTime.now(),
+                    dateUpdated = LocalDateTime.now()
                 )
             )
 

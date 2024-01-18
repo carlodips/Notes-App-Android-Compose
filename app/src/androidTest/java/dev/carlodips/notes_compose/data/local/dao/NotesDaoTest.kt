@@ -5,7 +5,7 @@ import com.google.common.truth.Truth.assertThat
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dev.carlodips.notes_compose.data.local.NotesDatabase
-import dev.carlodips.notes_compose.data.local.entity.Note
+import dev.carlodips.notes_compose.domain.model.Note
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelAndJoin
@@ -15,6 +15,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import java.time.LocalDateTime
 import java.util.concurrent.CountDownLatch
 import javax.inject.Inject
 import javax.inject.Named
@@ -52,7 +53,9 @@ class NotesDaoTest {
         val item = Note(
             noteId = 1,
             noteTitle = "Testing",
-            noteBody = "Hello world"
+            noteBody = "Hello world",
+            dateAdded = LocalDateTime.now(),
+            dateUpdated = LocalDateTime.now()
         )
 
         dao.insertNote(item)
@@ -75,12 +78,16 @@ class NotesDaoTest {
         val item1 = Note(
             noteId = 1,
             noteTitle = "Testing",
-            noteBody = "Hello world"
+            noteBody = "Hello world",
+            dateAdded = LocalDateTime.now(),
+            dateUpdated = LocalDateTime.now()
         )
         val item2 = Note(
             noteId = 1,
             noteTitle = "Testing",
-            noteBody = "Hello world"
+            noteBody = "Hello world",
+            dateAdded = LocalDateTime.now(),
+            dateUpdated = LocalDateTime.now()
         )
 
         dao.insertNote(item1)
@@ -105,7 +112,9 @@ class NotesDaoTest {
         val item = Note(
             noteId = 1,
             noteTitle = "Testing",
-            noteBody = "Hello world"
+            noteBody = "Hello world",
+            dateAdded = LocalDateTime.now(),
+            dateUpdated = LocalDateTime.now()
         )
         dao.insertNote(item)
 
@@ -113,15 +122,44 @@ class NotesDaoTest {
         val updatedNote = Note(
             noteId = 1,
             noteTitle = "new title",
-            noteBody = "Hello world"
+            noteBody = "Hello world",
+            dateAdded = item.dateAdded,
+            dateUpdated = LocalDateTime.now()
         )
 
         // update
         dao.insertNote(updatedNote)
 
-
         val result = dao.getNoteById(1)
 
         assertThat(result?.noteTitle).isEqualTo(updatedNote.noteTitle)
+    }
+
+    @Test
+    fun updateNoteStillHasSameDateAdded_returnsTrue() = runBlocking {
+        val item = Note(
+            noteId = 1,
+            noteTitle = "Testing",
+            noteBody = "Hello world",
+            dateAdded = LocalDateTime.now(),
+            dateUpdated = LocalDateTime.now()
+        )
+        dao.insertNote(item)
+
+        // create updated word
+        val updatedNote = Note(
+            noteId = 1,
+            noteTitle = "new title",
+            noteBody = "Hello world",
+            dateAdded = item.dateAdded,
+            dateUpdated = LocalDateTime.now()
+        )
+
+        // update
+        dao.insertNote(updatedNote)
+
+        val result = dao.getNoteById(1)
+
+        assertThat(result?.dateAdded).isEqualTo(item.dateAdded)
     }
 }

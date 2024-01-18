@@ -1,6 +1,6 @@
 package dev.carlodips.notes_compose.domain.repository
 
-import dev.carlodips.notes_compose.data.local.entity.Note
+import dev.carlodips.notes_compose.domain.model.Note
 import kotlinx.coroutines.flow.Flow
 
 interface NoteRepository {

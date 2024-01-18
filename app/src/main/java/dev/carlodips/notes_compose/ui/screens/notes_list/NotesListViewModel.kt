@@ -5,7 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.carlodips.notes_compose.R
-import dev.carlodips.notes_compose.data.local.entity.Note
+import dev.carlodips.notes_compose.domain.model.Note
 import dev.carlodips.notes_compose.domain.repository.NoteRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -52,7 +52,7 @@ class NotesListViewModel @Inject constructor(
     fun showSnackbar(snackbarMessage: String, snackbarActionLabel: String = "") {
         _uiState.update {
             it.copy(
-                shouldShowSnackBar = true,
+                shouldShowSnackbar = true,
                 snackbarMessage = snackbarMessage,
                 snackbarActionLabel = snackbarActionLabel
             )
@@ -62,7 +62,7 @@ class NotesListViewModel @Inject constructor(
     fun dismissSnackbar() {
         _uiState.update {
             it.copy(
-                shouldShowSnackBar = false,
+                shouldShowSnackbar = false,
                 snackbarMessage = "",
                 snackbarActionLabel = ""
             )

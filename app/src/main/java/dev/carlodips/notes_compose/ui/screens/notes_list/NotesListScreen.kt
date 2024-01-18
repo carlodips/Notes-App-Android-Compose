@@ -48,8 +48,8 @@ fun NotesListScreen(
         }
     }
 
-    LaunchedEffect(uiState.value.shouldShowSnackBar) {
-        if (uiState.value.shouldShowSnackBar) {
+    LaunchedEffect(uiState.value.shouldShowSnackbar) {
+        if (uiState.value.shouldShowSnackbar) {
             val snackBarResult = snackBarHostState.showSnackbar(
                 message = uiState.value.snackbarMessage,
                 actionLabel = uiState.value.snackbarActionLabel,
