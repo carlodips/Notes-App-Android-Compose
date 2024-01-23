@@ -16,4 +16,5 @@
     <string name="msg_note_discarded">Note discarded</string>
     <string name="msg_no_notes_added">No notes added yet.</string>
     <string name="save">Save</string>
+    <string name="display_last_edited">Edited: %1$s</string>
 </resources>

@@ -28,6 +28,7 @@ class AddEditNoteViewModel @Inject constructor(
         get() = _uiState.asStateFlow()
 
     private var dateAdded: LocalDateTime? = null // For edit
+    private var oldNote: Note? = null // For revert
 
     init {
         val noteId = savedStateHandle.get<Int>(NavigationItem.AddEditNote.NOTE_ID) ?: -1
@@ -41,11 +42,22 @@ class AddEditNoteViewModel @Inject constructor(
                             noteId = note.noteId,
                             title = note.noteTitle,
                             body = note.noteBody,
+                            lastEdited = note.formattedDateUpdated,
                             isEdit = true
                         )
                     }
                 }
             }
+        } else {
+            setShouldFocus(shouldFocus = true)
+        }
+    }
+
+    fun setShouldFocus(shouldFocus: Boolean) {
+        _uiState.update {
+            it.copy(
+                shouldFocus = shouldFocus
+            )
         }
     }
 

@@ -155,7 +155,6 @@ fun DeleteEntryDialog(
 @Composable
 fun PreviewNoteItem() {
     NotesComposeTheme {
-
         val notesList = arrayListOf(
             Note(
                 noteId = 0,

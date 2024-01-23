@@ -1,7 +1,9 @@
 package dev.carlodips.notes_compose.ui.screens.add_edit_note
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,7 +14,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -27,20 +28,24 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.carlodips.notes_compose.R
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun AddEditNoteScreen(
     modifier: Modifier = Modifier,
@@ -49,6 +54,7 @@ fun AddEditNoteScreen(
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val focusRequester = remember { FocusRequester() }
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(
         rememberTopAppBarState()
@@ -59,12 +65,21 @@ fun AddEditNoteScreen(
         viewModel.onSaveNote()
     }
 
+    // Auto focus onStart only during Add Notes
+    LaunchedEffect(uiState.value.shouldFocus) {
+        if (uiState.value.shouldFocus) {
+            focusRequester.requestFocus()
+            viewModel.setShouldFocus(false)
+        }
+    }
+
     LaunchedEffect(uiState.value.isDoneSaving) {
         if (uiState.value.isDoneSaving) {
             val message = if (uiState.value.message != -1) {
                 context.getString(uiState.value.message)
             } else ""
 
+            // TODO: Modify kung need ba lagi tawagin sa isDoneSaving
             onPopBackStack.invoke(message)
             // uiState.value.isDoneSaving does not need to reset to false since
             // this vm will be destroyed anyways after popBackStack
@@ -83,7 +98,7 @@ fun AddEditNoteScreen(
                         titleContentColor = MaterialTheme.colorScheme.primary,
                     ),
                     title = {
-                        Text(
+                        /*Text(
                             if (uiState.value.isEdit) {
                                 stringResource(id = R.string.edit_note)
                             } else {
@@ -91,10 +106,10 @@ fun AddEditNoteScreen(
                             },
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
-                        )
+                        )*/
                     },
                     navigationIcon = {
-                        IconButton(onClick = { viewModel.onSaveNote() }) {
+                        IconButton(onClick = { /*TODO: Show dialog kung gusto save changes*/ }) {
                             Icon(
                                 imageVector = Icons.Filled.ArrowBack,
                                 contentDescription = null
@@ -102,16 +117,39 @@ fun AddEditNoteScreen(
                         }
                     },
                     actions = {
-                        IconButton(onClick = { /* do something */ }) {
+                        /*IconButton(onClick = {
+                            viewModel.onSaveNote()
+                            keyboardController?.hide()
+                        }) {
                             Icon(
-                                imageVector = Icons.Filled.Menu,
-                                contentDescription = "Localized description"
+                                imageVector = Icons.Filled.Check,
+                                contentDescription = ""
                             )
-                        }
+                        }*/
                     },
                     scrollBehavior = scrollBehavior,
                 )
             },
+            bottomBar = {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Text(
+                        modifier = Modifier.padding(horizontal = 24.dp),
+                        text = stringResource(
+                            R.string.display_last_edited,
+                            uiState.value.lastEdited
+                        ),
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                    /*IconButton(onClick = { *//*TODO*//* }) {
+                        Icon(imageVector = Icons.Default.Favorite, contentDescription = null)
+                    }*/
+                }
+            }
         ) { innerPadding ->
             Column(
                 modifier = Modifier
@@ -119,8 +157,6 @@ fun AddEditNoteScreen(
                     .padding(innerPadding)
                     .verticalScroll(rememberScrollState()),
             ) {
-                Spacer(modifier = Modifier.height(12.dp))
-
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = uiState.value.title,
@@ -151,8 +187,8 @@ fun AddEditNoteScreen(
 
                 TextField(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(150.dp),
+                        .fillMaxSize()
+                        .focusRequester(focusRequester),
                     value = uiState.value.body,
                     onValueChange = {
                         viewModel.onBodyChange(it)
