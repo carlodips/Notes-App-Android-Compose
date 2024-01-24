@@ -28,14 +28,18 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -44,8 +48,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.carlodips.notes_compose.R
+import dev.carlodips.notes_compose.ui.component.BaseDialog
+import dev.carlodips.notes_compose.utils.ScreenMode
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEditNoteScreen(
     modifier: Modifier = Modifier,
@@ -55,10 +61,12 @@ fun AddEditNoteScreen(
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val focusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(
         rememberTopAppBarState()
     )
+    var showUndoDialog by remember { mutableStateOf(false) }
 
     // Call onSaveNote when back button is triggered
     BackHandler(enabled = true) {
@@ -117,15 +125,16 @@ fun AddEditNoteScreen(
                         }
                     },
                     actions = {
-                        /*IconButton(onClick = {
-                            viewModel.onSaveNote()
-                            keyboardController?.hide()
-                        }) {
-                            Icon(
-                                imageVector = Icons.Filled.Check,
-                                contentDescription = ""
-                            )
-                        }*/
+                        if (uiState.value.screenMode == ScreenMode.EDIT) {
+                            IconButton(onClick = {
+                                showUndoDialog = !showUndoDialog
+                            }) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_undo),
+                                    contentDescription = ""
+                                )
+                            }
+                        }
                     },
                     scrollBehavior = scrollBehavior,
                 )
@@ -158,7 +167,13 @@ fun AddEditNoteScreen(
                     .verticalScroll(rememberScrollState()),
             ) {
                 TextField(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .onFocusChanged {
+                            if (uiState.value.screenMode == ScreenMode.VIEW && it.hasFocus) {
+                                viewModel.setScreenMode(screenMode = ScreenMode.EDIT)
+                            }
+                        },
                     value = uiState.value.title,
                     onValueChange = {
                         viewModel.onTitleChange(it)
@@ -188,7 +203,12 @@ fun AddEditNoteScreen(
                 TextField(
                     modifier = Modifier
                         .fillMaxSize()
-                        .focusRequester(focusRequester),
+                        .focusRequester(focusRequester)
+                        .onFocusChanged {
+                            if (uiState.value.screenMode == ScreenMode.VIEW && it.hasFocus) {
+                                viewModel.setScreenMode(screenMode = ScreenMode.EDIT)
+                            }
+                        },
                     value = uiState.value.body,
                     onValueChange = {
                         viewModel.onBodyChange(it)
@@ -212,6 +232,18 @@ fun AddEditNoteScreen(
                     )
                 )
             }
+        }
+
+        if (showUndoDialog) {
+            BaseDialog(
+                setShowDialog = { showUndoDialog = it },
+                title = stringResource(id = R.string.undo),
+                message = stringResource(R.string.dialog_msg_undo),
+                onPositiveClick = {
+                    focusManager.clearFocus()
+                    viewModel.onUndoChanges()
+                },
+            )
         }
     }
 }

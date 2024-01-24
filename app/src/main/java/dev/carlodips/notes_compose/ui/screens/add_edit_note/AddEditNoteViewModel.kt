@@ -8,6 +8,7 @@ import dev.carlodips.notes_compose.R
 import dev.carlodips.notes_compose.domain.model.Note
 import dev.carlodips.notes_compose.domain.repository.NoteRepository
 import dev.carlodips.notes_compose.utils.NavigationItem
+import dev.carlodips.notes_compose.utils.ScreenMode
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -36,6 +37,7 @@ class AddEditNoteViewModel @Inject constructor(
         if (noteId != -1) {
             viewModelScope.launch {
                 repository.getNoteById(noteId)?.let { note ->
+                    oldNote = note
                     dateAdded = note.dateAdded
                     _uiState.update {
                         it.copy(
@@ -43,12 +45,17 @@ class AddEditNoteViewModel @Inject constructor(
                             title = note.noteTitle,
                             body = note.noteBody,
                             lastEdited = note.formattedDateUpdated,
-                            isEdit = true
+                            screenMode = ScreenMode.VIEW
                         )
                     }
                 }
             }
         } else {
+            _uiState.update {
+                it.copy(
+                    screenMode = ScreenMode.ADD
+                )
+            }
             setShouldFocus(shouldFocus = true)
         }
     }
@@ -70,6 +77,28 @@ class AddEditNoteViewModel @Inject constructor(
     fun onBodyChange(body: String) {
         _uiState.update {
             it.copy(body = body)
+        }
+    }
+
+    fun onUndoChanges() {
+        if (oldNote == null) return
+
+        _uiState.update {
+            it.copy(
+                noteId = oldNote!!.noteId,
+                title = oldNote!!.noteTitle,
+                body = oldNote!!.noteBody,
+                lastEdited = oldNote!!.formattedDateUpdated,
+                screenMode = ScreenMode.VIEW
+            )
+        }
+    }
+
+    fun setScreenMode(screenMode: ScreenMode) {
+        _uiState.update {
+            it.copy(
+                screenMode = screenMode
+            )
         }
     }
 
