@@ -12,10 +12,15 @@
     <string name="no">No</string>
     <string name="yes">Yes</string>
     <string name="undo">Undo</string>
-    <string name="note_deleted">Note deleted</string>
+
     <string name="msg_note_discarded">Note discarded</string>
     <string name="msg_no_notes_added">No notes added yet.</string>
+
     <string name="save">Save</string>
     <string name="display_last_edited">Edited: %1$s</string>
     <string name="dialog_msg_undo">Are you sure you want to undo changes made?</string>
+    <string name="hide">Hide</string>
+
+    <string name="msg_delete">Delete this note?</string>
+    <string name="msg_note_deleted">Note Deleted</string>
 </resources>

@@ -34,7 +34,7 @@ class NotesListViewModel @Inject constructor(
             deletedNote = note
             repository.deleteNote(note)
             showSnackbar(
-                snackbarMessage = app.getString(R.string.note_deleted),
+                snackbarMessage = app.getString(R.string.msg_note_deleted),
                 snackbarActionLabel = app.getString(R.string.undo)
             )
         }

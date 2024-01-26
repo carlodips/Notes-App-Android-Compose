@@ -30,7 +30,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.carlodips.notes_compose.R
 import dev.carlodips.notes_compose.utils.NavigationItem
 
-// TODO: Re-implement delete function
+// TODO:
+//  1. Re-implement delete function
+//  2. Add Search functionality
+//  3. Add different view
+
 @Composable
 fun NotesListScreen(
     modifier: Modifier = Modifier,

@@ -1,6 +1,5 @@
 package dev.carlodips.notes_compose.ui.screens.add_edit_note
 
-import androidx.annotation.StringRes
 import dev.carlodips.notes_compose.utils.ScreenMode
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -12,9 +11,9 @@ data class AddEditNoteUiState(
     val lastEdited: String,
     val isDoneSaving: Boolean,
     val screenMode: ScreenMode,
-    val hasMessage: Boolean,
-    @StringRes val message: Int,
-    val shouldFocus: Boolean
+    val hasDiscardNote: Boolean,
+    val shouldFocus: Boolean,
+    val isDoneDeleting: Boolean
 ) {
     companion object {
         val DEFAULT = AddEditNoteUiState(
@@ -25,9 +24,9 @@ data class AddEditNoteUiState(
                 .format(DateTimeFormatter.ofPattern("MM/dd/yyyy, HH:mm:ss")),
             isDoneSaving = false,
             screenMode = ScreenMode.ADD,
-            hasMessage = false,
-            message = -1,
-            shouldFocus = false
+            hasDiscardNote = false,
+            shouldFocus = false,
+            isDoneDeleting = false
         )
     }
 }

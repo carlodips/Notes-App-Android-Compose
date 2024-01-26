@@ -50,11 +50,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.carlodips.notes_compose.R
 import dev.carlodips.notes_compose.ui.component.BaseDialog
+import dev.carlodips.notes_compose.ui.screens.add_edit_note.dropdown.EditNoteDropdownMenu
 import dev.carlodips.notes_compose.utils.ScreenMode
 
 // TODO:
-//  1. Implement menu dropdown in appbar,
-//  2. add option to delete
 //  3. add option to set reminder
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -94,14 +93,10 @@ fun AddEditNoteScreen(
         }
     }
 
-    LaunchedEffect(uiState.value.message) {
-        if (uiState.value.message != -1) {
-            // Navigate back to note list screen if error is empty title and body
-            val message = if (uiState.value.message != -1) {
-                context.getString(uiState.value.message)
-            } else ""
-
-            onPopBackStack.invoke(message)
+    // Behavior after discarding note
+    LaunchedEffect(uiState.value.hasDiscardNote) {
+        if (uiState.value.hasDiscardNote) {
+            onPopBackStack.invoke(context.getString(R.string.msg_note_discarded))
         }
     }
 
@@ -111,6 +106,13 @@ fun AddEditNoteScreen(
             focusManager.clearFocus()
             viewModel.onDoneSaving()
             viewModel.setScreenMode(ScreenMode.VIEW)
+        }
+    }
+
+    // Behavior after calling viewModel.onDeleteNote()
+    LaunchedEffect(uiState.value.isDoneDeleting) {
+        if (uiState.value.isDoneDeleting) {
+            onPopBackStack.invoke(context.getString(R.string.msg_note_deleted))
         }
     }
 
@@ -165,6 +167,16 @@ fun AddEditNoteScreen(
                                     contentDescription = null
                                 )
                             }
+                        } else {
+                            EditNoteDropdownMenu(
+                                onHide = {
+                                    // TODO: Add hide functionality
+                                },
+                                onDelete = {
+                                    focusManager.clearFocus()
+                                    viewModel.onDeleteNote()
+                                }
+                            )
                         }
                     },
                     scrollBehavior = scrollBehavior,

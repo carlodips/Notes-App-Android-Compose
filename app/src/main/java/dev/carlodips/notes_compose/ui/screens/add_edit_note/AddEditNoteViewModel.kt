@@ -4,7 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.carlodips.notes_compose.R
 import dev.carlodips.notes_compose.domain.model.Note
 import dev.carlodips.notes_compose.domain.repository.NoteRepository
 import dev.carlodips.notes_compose.utils.NavigationItem
@@ -94,6 +93,16 @@ class AddEditNoteViewModel @Inject constructor(
         }
     }
 
+    fun onDeleteNote() {
+        viewModelScope.launch {
+            oldNote?.let { repository.deleteNote(it) }
+
+            _uiState.update {
+                it.copy(isDoneDeleting = true)
+            }
+        }
+    }
+
     fun setScreenMode(screenMode: ScreenMode) {
         _uiState.update {
             it.copy(screenMode = screenMode)
@@ -110,27 +119,28 @@ class AddEditNoteViewModel @Inject constructor(
         if (uiState.value.title.isBlank() && uiState.value.body.isBlank()) {
             _uiState.update {
                 it.copy(
-                    hasMessage = true,
-                    message = R.string.msg_note_discarded,
-                    isDoneSaving = true
+                    hasDiscardNote = true
                 )
             }
             return
         }
 
+        val noteToBeSaved = Note(
+            noteId = uiState.value.noteId,
+            noteTitle = uiState.value.title,
+            noteBody = uiState.value.body,
+            dateAdded = dateAdded ?: LocalDateTime.now(),
+            dateUpdated = LocalDateTime.now()
+        )
+
         viewModelScope.launch {
-            repository.insertNote(
-                Note(
-                    noteId = uiState.value.noteId,
-                    noteTitle = uiState.value.title,
-                    noteBody = uiState.value.body,
-                    dateAdded = dateAdded ?: LocalDateTime.now(),
-                    dateUpdated = LocalDateTime.now()
-                )
-            )
+            repository.insertNote(noteToBeSaved)
+
+            // Overwrite current note being cached in this viewmodel
+            oldNote = noteToBeSaved
 
             _uiState.update {
-                it.copy(isDoneSaving = true,)
+                it.copy(isDoneSaving = true)
             }
         }
     }
