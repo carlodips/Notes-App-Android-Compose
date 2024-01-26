@@ -57,11 +57,11 @@ class AddEditNoteViewModel @Inject constructor(
         }
     }
 
-    /*fun onDoneSaving() {
+    fun onDoneSaving() {
         _uiState.update {
             it.copy(isDoneSaving = false)
         }
-    }*/
+    }
 
     fun onSaveNoteClick() {
         if (uiState.value.title.isBlank() || uiState.value.body.isBlank()) {
