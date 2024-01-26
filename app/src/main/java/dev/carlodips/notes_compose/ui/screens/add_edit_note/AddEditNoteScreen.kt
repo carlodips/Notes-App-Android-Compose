@@ -1,6 +1,5 @@
 package dev.carlodips.notes_compose.ui.screens.add_edit_note
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -57,8 +56,6 @@ import dev.carlodips.notes_compose.utils.ScreenMode
 //  1. Implement menu dropdown in appbar,
 //  2. add option to delete
 //  3. add option to set reminder
-//  4. fix bug when edit -> save -> edit -> save not working
-//  5. Make add and edit similar behavior
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEditNoteScreen(
@@ -97,24 +94,23 @@ fun AddEditNoteScreen(
         }
     }
 
+    LaunchedEffect(uiState.value.message) {
+        if (uiState.value.message != -1) {
+            // Navigate back to note list screen if error is empty title and body
+            val message = if (uiState.value.message != -1) {
+                context.getString(uiState.value.message)
+            } else ""
+
+            onPopBackStack.invoke(message)
+        }
+    }
+
     // Behavior after calling viewModel.onSaveNote()
     LaunchedEffect(uiState.value.isDoneSaving) {
         if (uiState.value.isDoneSaving) {
-            Log.v("isDoneSaving","hello")
-            if (uiState.value.screenMode == ScreenMode.ADD) {
-                val message = if (uiState.value.message != -1) {
-                    context.getString(uiState.value.message)
-                } else ""
-
-                // TODO: Modify kung need ba lagi tawagin sa isDoneSaving
-                onPopBackStack.invoke(message)
-            } else if (uiState.value.screenMode == ScreenMode.EDIT) {
-                // I set ScreenMode here instead of inside vm because I need to also call clearFocus()
-                focusManager.clearFocus()
-                viewModel.setScreenMode(ScreenMode.VIEW) //
-            }
-            // uiState.value.isDoneSaving does not need to reset to false since
-            // this vm will be destroyed anyways after popBackStack
+            focusManager.clearFocus()
+            viewModel.onDoneSaving()
+            viewModel.setScreenMode(ScreenMode.VIEW)
         }
     }
 
@@ -158,7 +154,9 @@ fun AddEditNoteScreen(
                                     contentDescription = ""
                                 )
                             }
+                        }
 
+                        if (uiState.value.screenMode != ScreenMode.VIEW) {
                             IconButton(onClick = {
                                 viewModel.onSaveNote()
                             }) {
