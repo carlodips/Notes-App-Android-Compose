@@ -24,7 +24,7 @@ data class Note(
     @ColumnInfo(name = "dateUpdated")
     val dateUpdated: LocalDateTime
 ) {
-    val formattedDateUpdated: String
+    val formattedDateUpdated: String // TODO: Fix formatting
         get() = dateUpdated.format(DateTimeFormatter.ofPattern("MM/dd/yyyy, HH:mm:ss"))
 
     val displayNoteTitle: String

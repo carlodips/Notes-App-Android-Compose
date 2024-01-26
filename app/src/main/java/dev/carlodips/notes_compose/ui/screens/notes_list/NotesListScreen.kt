@@ -30,6 +30,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.carlodips.notes_compose.R
 import dev.carlodips.notes_compose.utils.NavigationItem
 
+// TODO: Re-implement delete function
 @Composable
 fun NotesListScreen(
     modifier: Modifier = Modifier,

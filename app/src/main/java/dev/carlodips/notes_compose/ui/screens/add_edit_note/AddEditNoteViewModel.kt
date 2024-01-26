@@ -96,9 +96,7 @@ class AddEditNoteViewModel @Inject constructor(
 
     fun setScreenMode(screenMode: ScreenMode) {
         _uiState.update {
-            it.copy(
-                screenMode = screenMode
-            )
+            it.copy(screenMode = screenMode)
         }
     }
 
@@ -132,7 +130,7 @@ class AddEditNoteViewModel @Inject constructor(
             )
 
             _uiState.update {
-                it.copy(isDoneSaving = true)
+                it.copy(isDoneSaving = true,)
             }
         }
     }

@@ -1,5 +1,6 @@
 package dev.carlodips.notes_compose.ui.screens.add_edit_note
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -51,6 +53,12 @@ import dev.carlodips.notes_compose.R
 import dev.carlodips.notes_compose.ui.component.BaseDialog
 import dev.carlodips.notes_compose.utils.ScreenMode
 
+// TODO:
+//  1. Implement menu dropdown in appbar,
+//  2. add option to delete
+//  3. add option to set reminder
+//  4. fix bug when edit -> save -> edit -> save not working
+//  5. Make add and edit similar behavior
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEditNoteScreen(
@@ -68,11 +76,6 @@ fun AddEditNoteScreen(
     )
     var showUndoDialog by remember { mutableStateOf(false) }
 
-    // Call onSaveNote when back button is triggered
-    BackHandler(enabled = true) {
-        viewModel.onSaveNote()
-    }
-
     // Auto focus onStart only during Add Notes
     LaunchedEffect(uiState.value.shouldFocus) {
         if (uiState.value.shouldFocus) {
@@ -81,14 +84,35 @@ fun AddEditNoteScreen(
         }
     }
 
+    // Behavior when back button is triggered.
+    BackHandler(enabled = true) {
+        when (uiState.value.screenMode) {
+            ScreenMode.VIEW -> {
+                onPopBackStack.invoke("")
+            }
+
+            ScreenMode.ADD, ScreenMode.EDIT -> {
+                viewModel.onSaveNote()
+            }
+        }
+    }
+
+    // Behavior after calling viewModel.onSaveNote()
     LaunchedEffect(uiState.value.isDoneSaving) {
         if (uiState.value.isDoneSaving) {
-            val message = if (uiState.value.message != -1) {
-                context.getString(uiState.value.message)
-            } else ""
+            Log.v("isDoneSaving","hello")
+            if (uiState.value.screenMode == ScreenMode.ADD) {
+                val message = if (uiState.value.message != -1) {
+                    context.getString(uiState.value.message)
+                } else ""
 
-            // TODO: Modify kung need ba lagi tawagin sa isDoneSaving
-            onPopBackStack.invoke(message)
+                // TODO: Modify kung need ba lagi tawagin sa isDoneSaving
+                onPopBackStack.invoke(message)
+            } else if (uiState.value.screenMode == ScreenMode.EDIT) {
+                // I set ScreenMode here instead of inside vm because I need to also call clearFocus()
+                focusManager.clearFocus()
+                viewModel.setScreenMode(ScreenMode.VIEW) //
+            }
             // uiState.value.isDoneSaving does not need to reset to false since
             // this vm will be destroyed anyways after popBackStack
         }
@@ -132,6 +156,15 @@ fun AddEditNoteScreen(
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_undo),
                                     contentDescription = ""
+                                )
+                            }
+
+                            IconButton(onClick = {
+                                viewModel.onSaveNote()
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Filled.Check,
+                                    contentDescription = null
                                 )
                             }
                         }
