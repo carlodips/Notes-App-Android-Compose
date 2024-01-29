@@ -51,7 +51,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.carlodips.notes_compose.R
 import dev.carlodips.notes_compose.ui.component.BaseDialog
 import dev.carlodips.notes_compose.ui.screens.add_edit_note.dropdown.EditNoteDropdownMenu
+import dev.carlodips.notes_compose.ui.screens.add_edit_note.util.AddEditNoteResultEvent
+import dev.carlodips.notes_compose.ui.screens.add_edit_note.util.AddEditNoteUiEvent
 import dev.carlodips.notes_compose.utils.ScreenMode
+import kotlinx.coroutines.flow.collectLatest
 
 // TODO:
 //  3. add option to set reminder
@@ -73,10 +76,10 @@ fun AddEditNoteScreen(
     var showUndoDialog by remember { mutableStateOf(false) }
 
     // Auto focus onStart only during Add Notes
-    LaunchedEffect(uiState.value.shouldFocus) {
-        if (uiState.value.shouldFocus) {
+    LaunchedEffect(uiState.value.shouldAutoFocusBody) {
+        if (uiState.value.shouldAutoFocusBody) {
             focusRequester.requestFocus()
-            viewModel.setShouldFocus(false)
+            viewModel.onAddEditNoteEvent(AddEditNoteUiEvent.AutoFocusedBody)
         }
     }
 
@@ -88,31 +91,8 @@ fun AddEditNoteScreen(
             }
 
             ScreenMode.ADD, ScreenMode.EDIT -> {
-                viewModel.onSaveNote()
+                viewModel.onAddEditNoteEvent(AddEditNoteUiEvent.SaveNote)
             }
-        }
-    }
-
-    // Behavior after discarding note
-    LaunchedEffect(uiState.value.hasDiscardNote) {
-        if (uiState.value.hasDiscardNote) {
-            onPopBackStack.invoke(context.getString(R.string.msg_note_discarded))
-        }
-    }
-
-    // Behavior after calling viewModel.onSaveNote()
-    LaunchedEffect(uiState.value.isDoneSaving) {
-        if (uiState.value.isDoneSaving) {
-            focusManager.clearFocus()
-            viewModel.onDoneSaving()
-            viewModel.setScreenMode(ScreenMode.VIEW)
-        }
-    }
-
-    // Behavior after calling viewModel.onDeleteNote()
-    LaunchedEffect(uiState.value.isDoneDeleting) {
-        if (uiState.value.isDoneDeleting) {
-            onPopBackStack.invoke(context.getString(R.string.msg_note_deleted))
         }
     }
 
@@ -160,7 +140,7 @@ fun AddEditNoteScreen(
 
                         if (uiState.value.screenMode != ScreenMode.VIEW) {
                             IconButton(onClick = {
-                                viewModel.onSaveNote()
+                                viewModel.onAddEditNoteEvent(AddEditNoteUiEvent.SaveNote)
                             }) {
                                 Icon(
                                     imageVector = Icons.Filled.Check,
@@ -174,7 +154,7 @@ fun AddEditNoteScreen(
                                 },
                                 onDelete = {
                                     focusManager.clearFocus()
-                                    viewModel.onDeleteNote()
+                                    viewModel.onAddEditNoteEvent(AddEditNoteUiEvent.DeleteNote)
                                 }
                             )
                         }
@@ -219,7 +199,7 @@ fun AddEditNoteScreen(
                         },
                     value = uiState.value.title,
                     onValueChange = {
-                        viewModel.onTitleChange(it)
+                        viewModel.onAddEditNoteEvent(AddEditNoteUiEvent.EnteredTitle(it))
                     },
                     placeholder = {
                         Text(text = stringResource(R.string.title))
@@ -254,7 +234,7 @@ fun AddEditNoteScreen(
                         },
                     value = uiState.value.body,
                     onValueChange = {
-                        viewModel.onBodyChange(it)
+                        viewModel.onAddEditNoteEvent(AddEditNoteUiEvent.EnteredBody(it))
                     },
                     placeholder = {
                         Text(text = stringResource(R.string.description))
@@ -284,9 +264,34 @@ fun AddEditNoteScreen(
                 message = stringResource(R.string.dialog_msg_undo),
                 onPositiveClick = {
                     focusManager.clearFocus()
-                    viewModel.onUndoChanges()
+                    viewModel.onAddEditNoteEvent(AddEditNoteUiEvent.UndoChanges)
                 },
             )
+        }
+    }
+
+    LaunchedEffect(key1 = true) {
+        viewModel.eventFlow.collectLatest { event ->
+            when (event) {
+                is AddEditNoteResultEvent.NoteDeleted -> {
+                    onPopBackStack.invoke(context.getString(R.string.msg_note_deleted))
+                }
+
+                is AddEditNoteResultEvent.NoteSaved -> {
+                    focusManager.clearFocus()
+                }
+
+                is AddEditNoteResultEvent.NoteDiscarded -> {
+                    val message = if (event.isEdit) {
+                        ""
+                    }
+                    else {
+                        context.getString(R.string.msg_note_discarded)
+                    }
+
+                    onPopBackStack.invoke(message)
+                }
+            }
         }
     }
 }

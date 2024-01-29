@@ -6,10 +6,14 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.carlodips.notes_compose.domain.model.Note
 import dev.carlodips.notes_compose.domain.repository.NoteRepository
+import dev.carlodips.notes_compose.ui.screens.add_edit_note.util.AddEditNoteUiEvent
+import dev.carlodips.notes_compose.ui.screens.add_edit_note.util.AddEditNoteResultEvent
 import dev.carlodips.notes_compose.utils.NavigationItem
 import dev.carlodips.notes_compose.utils.ScreenMode
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -22,10 +26,12 @@ class AddEditNoteViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val _uiState =
-        MutableStateFlow(AddEditNoteUiState.DEFAULT)
+    private val _uiState = MutableStateFlow(AddEditNoteUiState.DEFAULT)
     val uiState: StateFlow<AddEditNoteUiState>
         get() = _uiState.asStateFlow()
+
+    private val _eventFlow = MutableSharedFlow<AddEditNoteResultEvent>()
+    val eventFlow = _eventFlow.asSharedFlow()
 
     private var dateAdded: LocalDateTime? = null // For edit
     private var oldNote: Note? = null // For revert
@@ -55,19 +61,51 @@ class AddEditNoteViewModel @Inject constructor(
                     screenMode = ScreenMode.ADD
                 )
             }
-            setShouldFocus(shouldFocus = true)
+            setShouldAutoFocusBody(shouldFocus = true)
         }
     }
 
-    fun setShouldFocus(shouldFocus: Boolean) {
+    fun onAddEditNoteEvent(event: AddEditNoteUiEvent) {
+        when (event) {
+            is AddEditNoteUiEvent.EnteredTitle -> {
+                _uiState.update {
+                    it.copy(title = event.title)
+                }
+            }
+
+            is AddEditNoteUiEvent.EnteredBody -> {
+                _uiState.update {
+                    it.copy(body = event.body)
+                }
+            }
+
+            is AddEditNoteUiEvent.UndoChanges -> {
+                onUndoChanges()
+            }
+
+            is AddEditNoteUiEvent.DeleteNote -> {
+                onDeleteNote()
+            }
+
+            is AddEditNoteUiEvent.SaveNote -> {
+                onSaveNote()
+            }
+
+            is AddEditNoteUiEvent.AutoFocusedBody -> {
+                setShouldAutoFocusBody(false)
+            }
+        }
+    }
+
+
+    // TODO: Not sure if this is the right way
+    private fun setShouldAutoFocusBody(shouldFocus: Boolean) {
         _uiState.update {
-            it.copy(
-                shouldFocus = shouldFocus
-            )
+            it.copy(shouldAutoFocusBody = shouldFocus)
         }
     }
 
-    fun onTitleChange(title: String) {
+    /*fun onTitleChange(title: String) {
         _uiState.update {
             it.copy(title = title)
         }
@@ -77,9 +115,9 @@ class AddEditNoteViewModel @Inject constructor(
         _uiState.update {
             it.copy(body = body)
         }
-    }
+    }*/
 
-    fun onUndoChanges() {
+    private fun onUndoChanges() {
         if (oldNote == null) return
 
         _uiState.update {
@@ -93,13 +131,10 @@ class AddEditNoteViewModel @Inject constructor(
         }
     }
 
-    fun onDeleteNote() {
+    private fun onDeleteNote() {
         viewModelScope.launch {
             oldNote?.let { repository.deleteNote(it) }
-
-            _uiState.update {
-                it.copy(isDoneDeleting = true)
-            }
+            _eventFlow.emit(AddEditNoteResultEvent.NoteDeleted)
         }
     }
 
@@ -109,20 +144,24 @@ class AddEditNoteViewModel @Inject constructor(
         }
     }
 
-    fun onDoneSaving() {
+    /*fun onDoneSaving() {
         _uiState.update {
             it.copy(isDoneSaving = false)
         }
-    }
+    }*/
 
-    fun onSaveNote() {
+    private fun onSaveNote() {
         if (uiState.value.title.isBlank() && uiState.value.body.isBlank()) {
-            _uiState.update {
-                it.copy(
-                    hasDiscardNote = true
-                )
+            if (uiState.value.screenMode == ScreenMode.ADD) {
+                viewModelScope.launch {
+                    _eventFlow.emit(AddEditNoteResultEvent.NoteDiscarded(isEdit = false))
+                }
+            } else {
+                viewModelScope.launch {
+                    oldNote?.let { repository.deleteNote(it) }
+                    _eventFlow.emit(AddEditNoteResultEvent.NoteDiscarded(isEdit = true))
+                }
             }
-            return
         }
 
         val noteToBeSaved = Note(
@@ -139,9 +178,8 @@ class AddEditNoteViewModel @Inject constructor(
             // Overwrite current note being cached in this viewmodel
             oldNote = noteToBeSaved
 
-            _uiState.update {
-                it.copy(isDoneSaving = true)
-            }
+            setScreenMode(ScreenMode.VIEW)
+            _eventFlow.emit(AddEditNoteResultEvent.NoteSaved)
         }
     }
 }

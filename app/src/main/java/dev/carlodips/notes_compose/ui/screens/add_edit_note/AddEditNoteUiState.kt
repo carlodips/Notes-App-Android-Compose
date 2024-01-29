@@ -9,11 +9,11 @@ data class AddEditNoteUiState(
     val title: String,
     val body: String,
     val lastEdited: String,
-    val isDoneSaving: Boolean,
+    //val isDoneSaving: Boolean,
     val screenMode: ScreenMode,
-    val hasDiscardNote: Boolean,
-    val shouldFocus: Boolean,
-    val isDoneDeleting: Boolean
+    //val hasDiscardNote: Boolean,
+    val shouldAutoFocusBody: Boolean,
+    //val isDoneDeleting: Boolean
 ) {
     companion object {
         val DEFAULT = AddEditNoteUiState(
@@ -22,11 +22,11 @@ data class AddEditNoteUiState(
             body = "",
             lastEdited = LocalDateTime.now()
                 .format(DateTimeFormatter.ofPattern("MM/dd/yyyy, HH:mm:ss")),
-            isDoneSaving = false,
+            //isDoneSaving = false,
             screenMode = ScreenMode.ADD,
-            hasDiscardNote = false,
-            shouldFocus = false,
-            isDoneDeleting = false
+//            hasDiscardNote = false,
+            shouldAutoFocusBody = false,
+//            isDoneDeleting = false
         )
     }
 }
