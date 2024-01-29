@@ -162,6 +162,7 @@ class AddEditNoteViewModel @Inject constructor(
                     _eventFlow.emit(AddEditNoteResultEvent.NoteDiscarded(isEdit = true))
                 }
             }
+            return
         }
 
         val noteToBeSaved = Note(
