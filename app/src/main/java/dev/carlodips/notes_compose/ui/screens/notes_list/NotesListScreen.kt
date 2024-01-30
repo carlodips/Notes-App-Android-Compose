@@ -22,13 +22,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.carlodips.notes_compose.R
+import dev.carlodips.notes_compose.ui.screens.add_edit_note.util.AddEditNoteResultEvent
+import dev.carlodips.notes_compose.ui.screens.notes_list.util.NotesListResultEvent
+import dev.carlodips.notes_compose.ui.screens.notes_list.util.NotesListUiEvent
 import dev.carlodips.notes_compose.utils.NavigationItem
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 // TODO:
 //  1. Re-implement delete function
@@ -44,16 +50,20 @@ fun NotesListScreen(
 ) {
     val notesList = viewModel.notesList.collectAsState(initial = emptyList())
     val snackBarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(messageFromAddEdit) {
         if (messageFromAddEdit.isNotEmpty()) {
-            viewModel.showSnackbar(messageFromAddEdit)
+            snackBarHostState.showSnackbar(
+                message = messageFromAddEdit,
+                duration = SnackbarDuration.Short
+            )
         }
     }
 
-    LaunchedEffect(uiState.value.shouldShowSnackbar) {
+    /*LaunchedEffect(uiState.value.shouldShowSnackbar) {
         if (uiState.value.shouldShowSnackbar) {
             val snackBarResult = snackBarHostState.showSnackbar(
                 message = uiState.value.snackbarMessage,
@@ -71,7 +81,7 @@ fun NotesListScreen(
                 }
             }
         }
-    }
+    }*/
 
     Surface(
         modifier = modifier.fillMaxSize(),
@@ -127,10 +137,39 @@ fun NotesListScreen(
                                 )
                             },
                             onDeleteClick = {
-                                viewModel.onDeleteNoteClick(note)
+                                viewModel.onEvent(NotesListUiEvent.DeleteNote(note))
+                                scope.launch {
+                                    val snackBarResult = snackBarHostState.showSnackbar(
+                                        message = uiState.value.snackbarMessage,
+                                        actionLabel = uiState.value.snackbarActionLabel,
+                                        duration = SnackbarDuration.Short
+                                    )
+
+                                    if (snackBarResult == SnackbarResult.ActionPerformed) {
+                                        viewModel.onEvent(NotesListUiEvent.UndoDeleteNote)
+                                    }
+                                }
+
+
                             }
                         )
                         Spacer(modifier = Modifier.height(12.dp))
+                    }
+                }
+            }
+        }
+    }
+
+    LaunchedEffect(key1 = true) {
+        viewModel.eventFlow.collectLatest { event ->
+            when (event) {
+                is NotesListResultEvent.ShowSnackbar -> {
+                    if (event.message.isNotEmpty()) {
+                        snackBarHostState.showSnackbar(
+                            message = uiState.value.snackbarMessage,
+                            actionLabel = uiState.value.snackbarActionLabel,
+                            duration = SnackbarDuration.Short
+                        )
                     }
                 }
             }
