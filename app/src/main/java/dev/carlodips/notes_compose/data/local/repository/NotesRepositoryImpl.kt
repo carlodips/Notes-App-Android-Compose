@@ -8,8 +8,8 @@ import kotlinx.coroutines.flow.Flow
 class NotesRepositoryImpl(
     private val dao: NotesDao
 ): NoteRepository {
-    override suspend fun insertNote(note: Note) {
-        dao.insertNote(note)
+    override suspend fun insertNote(note: Note): Long {
+        return dao.insertNote(note)
     }
 
     override suspend fun deleteNote(note: Note) {

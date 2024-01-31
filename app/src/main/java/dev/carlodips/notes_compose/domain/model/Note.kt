@@ -10,7 +10,7 @@ import java.time.format.DateTimeFormatter
 data class Note(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "noteId")
-    val noteId: Int,
+    val noteId: Int? = null,
 
     @ColumnInfo(name = "noteTitle")
     val noteTitle: String,

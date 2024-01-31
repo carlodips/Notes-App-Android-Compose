@@ -6,8 +6,8 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.carlodips.notes_compose.domain.model.Note
 import dev.carlodips.notes_compose.domain.repository.NoteRepository
-import dev.carlodips.notes_compose.ui.screens.add_edit_note.util.AddEditNoteUiEvent
 import dev.carlodips.notes_compose.ui.screens.add_edit_note.util.AddEditNoteResultEvent
+import dev.carlodips.notes_compose.ui.screens.add_edit_note.util.AddEditNoteUiEvent
 import dev.carlodips.notes_compose.utils.NavigationItem
 import dev.carlodips.notes_compose.utils.ScreenMode
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -33,6 +33,7 @@ class AddEditNoteViewModel @Inject constructor(
     private val _eventFlow = MutableSharedFlow<AddEditNoteResultEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
+    private var currentNoteId: Int? = null
     private var dateAdded: LocalDateTime? = null // For edit
     private var oldNote: Note? = null // For revert
 
@@ -43,10 +44,10 @@ class AddEditNoteViewModel @Inject constructor(
             viewModelScope.launch {
                 repository.getNoteById(noteId)?.let { note ->
                     oldNote = note
+                    currentNoteId = note.noteId
                     dateAdded = note.dateAdded
                     _uiState.update {
                         it.copy(
-                            noteId = note.noteId,
                             title = note.noteTitle,
                             body = note.noteBody,
                             lastEdited = note.formattedDateUpdated,
@@ -122,7 +123,6 @@ class AddEditNoteViewModel @Inject constructor(
 
         _uiState.update {
             it.copy(
-                noteId = oldNote!!.noteId,
                 title = oldNote!!.noteTitle,
                 body = oldNote!!.noteBody,
                 lastEdited = oldNote!!.formattedDateUpdated,
@@ -166,7 +166,7 @@ class AddEditNoteViewModel @Inject constructor(
         }
 
         val noteToBeSaved = Note(
-            noteId = uiState.value.noteId,
+            noteId = currentNoteId,
             noteTitle = uiState.value.title,
             noteBody = uiState.value.body,
             dateAdded = dateAdded ?: LocalDateTime.now(),
@@ -174,10 +174,20 @@ class AddEditNoteViewModel @Inject constructor(
         )
 
         viewModelScope.launch {
-            repository.insertNote(noteToBeSaved)
+            currentNoteId = repository.insertNote(noteToBeSaved).toInt()
 
-            // Overwrite current note being cached in this viewmodel
-            oldNote = noteToBeSaved
+            // Overwrite current values being cached in this viewmodel after inserting/updating note
+            oldNote = noteToBeSaved.copy(
+                noteId = currentNoteId
+            )
+
+            dateAdded = noteToBeSaved.dateAdded
+
+            _uiState.update {
+                it.copy(
+                    lastEdited = noteToBeSaved.formattedDateUpdated
+                )
+            }
 
             setScreenMode(ScreenMode.VIEW)
             _eventFlow.emit(AddEditNoteResultEvent.NoteSaved)

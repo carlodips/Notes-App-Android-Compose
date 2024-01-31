@@ -5,7 +5,6 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 data class AddEditNoteUiState(
-    val noteId: Int, // For edit
     val title: String,
     val body: String,
     val lastEdited: String,
@@ -17,7 +16,6 @@ data class AddEditNoteUiState(
 ) {
     companion object {
         val DEFAULT = AddEditNoteUiState(
-            noteId = 0,
             title = "",
             body = "",
             lastEdited = LocalDateTime.now()
