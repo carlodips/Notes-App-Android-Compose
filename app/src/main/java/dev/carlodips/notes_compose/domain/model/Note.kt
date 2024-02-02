@@ -22,7 +22,16 @@ data class Note(
     val dateAdded: LocalDateTime = LocalDateTime.now(),
 
     @ColumnInfo(name = "dateUpdated")
-    val dateUpdated: LocalDateTime
+    val dateUpdated: LocalDateTime,
+
+    @ColumnInfo(name = "isHidden")
+    val isNoteHidden: Boolean = false,
+
+    @ColumnInfo(name = "isLocked")
+    val isNoteLocked: Boolean = false,
+
+    @ColumnInfo(name = "folderId")
+    val folderId: Int? = null
 ) {
     val formattedDateUpdated: String // TODO: Fix formatting
         get() = dateUpdated.format(DateTimeFormatter.ofPattern("MM/dd/yyyy, HH:mm:ss"))
