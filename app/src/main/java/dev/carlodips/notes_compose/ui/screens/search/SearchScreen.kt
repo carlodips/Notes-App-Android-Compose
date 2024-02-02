@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.carlodips.notes_compose.R
+import dev.carlodips.notes_compose.ui.component.BaseCard
 import dev.carlodips.notes_compose.ui.component.CustomSearchBar
 import dev.carlodips.notes_compose.ui.screens.notes_list.NoteItem
 import dev.carlodips.notes_compose.ui.screens.search.util.SearchUiEvent
@@ -69,37 +70,41 @@ fun SearchScreen(
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
-                CustomSearchBar(
-                    modifier = Modifier.focusRequester(focusRequester),
-                    query = uiState.value.query,
-                    onQueryChange = {
-                        viewModel.onUiEvent(SearchUiEvent.EnteredQuery(it))
-                    },
-                    leadingIcon = {
-                        IconButton(onClick = { onPopBackStack.invoke() }) {
-                            Icon(
-                                imageVector = Icons.Filled.ArrowBack,
-                                contentDescription = null
+                BaseCard(isEnabled = true) {
+                    CustomSearchBar(
+                        modifier = Modifier
+                            .padding(vertical = 4.dp)
+                            .focusRequester(focusRequester),
+                        query = uiState.value.query,
+                        onQueryChange = {
+                            viewModel.onUiEvent(SearchUiEvent.EnteredQuery(it))
+                        },
+                        leadingIcon = {
+                            IconButton(onClick = { onPopBackStack.invoke() }) {
+                                Icon(
+                                    imageVector = Icons.Filled.ArrowBack,
+                                    contentDescription = null
+                                )
+                            }
+                        },
+                        trailingIcon = {
+                            IconButton(onClick = {
+                                // TODO: Show menu
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Filled.MoreVert,
+                                    contentDescription = null
+                                )
+                            }
+                        },
+                        placeholder = {
+                            Text(
+                                text = stringResource(R.string.placeholder_search),
+                                color = Color.Gray
                             )
                         }
-                    },
-                    trailingIcon = {
-                        IconButton(onClick = {
-                            // TODO: Show menu
-                        }) {
-                            Icon(
-                                imageVector = Icons.Filled.MoreVert,
-                                contentDescription = null
-                            )
-                        }
-                    },
-                    placeholder = {
-                        Text(
-                            text = stringResource(R.string.placeholder_search),
-                            color = Color.Gray
-                        )
-                    }
-                )
+                    )
+                }
                 Spacer(modifier = Modifier.height(24.dp))
                 LazyColumn(
                     modifier = Modifier
