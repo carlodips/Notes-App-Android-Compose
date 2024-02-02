@@ -3,7 +3,6 @@ package dev.carlodips.notes_compose.ui.screens
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.Composable
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -12,6 +11,7 @@ import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
 import dev.carlodips.notes_compose.ui.screens.add_edit_note.AddEditNoteScreen
 import dev.carlodips.notes_compose.ui.screens.notes_list.NotesListScreen
+import dev.carlodips.notes_compose.ui.screens.search.SearchScreen
 import dev.carlodips.notes_compose.ui.theme.NotesComposeTheme
 import dev.carlodips.notes_compose.utils.NavigationItem
 
@@ -35,6 +35,9 @@ class MainActivity : ComponentActivity() {
                             messageFromAddEdit = messageFromAddEditScreen,
                             onNavigateToAddEdit = {
                                 navController.navigate(it)
+                            },
+                            onNavigateToSearch = {
+                                navController.navigate(NavigationItem.Search.route)
                             }
                         )
                     }
@@ -57,6 +60,19 @@ class MainActivity : ComponentActivity() {
                             )
                             navController.popBackStack()
                         })
+                    }
+
+                    composable(
+                        route = NavigationItem.Search.route
+                    ) {
+                        SearchScreen(
+                            onPopBackStack = {
+                                navController.popBackStack()
+                            },
+                            onNavigateToViewNote = {
+                                navController.navigate(it)
+                            }
+                        )
                     }
                 }
             }

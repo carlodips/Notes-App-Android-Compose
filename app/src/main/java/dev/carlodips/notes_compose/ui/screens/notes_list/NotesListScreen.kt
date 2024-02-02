@@ -8,8 +8,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -18,6 +23,9 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -25,11 +33,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.carlodips.notes_compose.R
-import dev.carlodips.notes_compose.ui.screens.add_edit_note.util.AddEditNoteResultEvent
 import dev.carlodips.notes_compose.ui.screens.notes_list.util.NotesListResultEvent
 import dev.carlodips.notes_compose.ui.screens.notes_list.util.NotesListUiEvent
 import dev.carlodips.notes_compose.utils.NavigationItem
@@ -41,18 +49,24 @@ import kotlinx.coroutines.launch
 //  2. Add Search functionality
 //  3. Add different view
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotesListScreen(
     modifier: Modifier = Modifier,
     viewModel: NotesListViewModel = hiltViewModel(),
     messageFromAddEdit: String,
-    onNavigateToAddEdit: (route: String) -> Unit
+    onNavigateToAddEdit: (route: String) -> Unit,
+    onNavigateToSearch: () -> Unit
 ) {
     val notesList = viewModel.notesList.collectAsState(initial = emptyList())
     val snackBarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(
+        rememberTopAppBarState()
+    )
 
     LaunchedEffect(messageFromAddEdit) {
         if (messageFromAddEdit.isNotEmpty()) {
@@ -98,6 +112,49 @@ fun NotesListScreen(
                     Icon(Icons.Filled.Add, null)
                 }
             },
+            topBar = {
+                TopAppBar(
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        titleContentColor = MaterialTheme.colorScheme.primary,
+                    ),
+                    title = {
+                        Text(
+                            stringResource(id = R.string.notes),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = { /*TODO: Show hamburger*/ }) {
+                            Icon(
+                                imageVector = Icons.Filled.Menu,
+                                contentDescription = null
+                            )
+                        }
+                    },
+                    actions = {
+                        IconButton(onClick = {
+                             onNavigateToSearch.invoke()
+                        }) {
+                            Icon(
+                                imageVector = Icons.Filled.Search,
+                                contentDescription = null
+                            )
+                        }
+
+                        IconButton(onClick = {
+                            // TODO: Show menuu
+                        }) {
+                            Icon(
+                                imageVector = Icons.Filled.MoreVert,
+                                contentDescription = null
+                            )
+                        }
+                    },
+                    scrollBehavior = scrollBehavior,
+                )
+            }
         ) { innerPadding ->
             LazyColumn(
                 modifier = Modifier
@@ -106,14 +163,14 @@ fun NotesListScreen(
             ) {
                 item {
                     Spacer(modifier = Modifier.height(24.dp))
-                    Text(
+                    /*Text(
                         modifier = Modifier.padding(
                             horizontal = 16.dp
                         ),
                         text = stringResource(R.string.notes),
                         style = MaterialTheme.typography.titleLarge
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(8.dp))*/
                 }
 
                 if (notesList.value.isEmpty()) {
@@ -131,7 +188,7 @@ fun NotesListScreen(
                     items(notesList.value) { note ->
                         NoteItem(
                             note = note,
-                            onEditClick = {
+                            onItemClick = {
                                 onNavigateToAddEdit.invoke(
                                     NavigationItem.AddEditNote.route + "?noteId=${note.noteId}"
                                 )

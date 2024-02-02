@@ -66,7 +66,7 @@ class AddEditNoteViewModel @Inject constructor(
         }
     }
 
-    fun onAddEditNoteEvent(event: AddEditNoteUiEvent) {
+    fun onUiEvent(event: AddEditNoteUiEvent) {
         when (event) {
             is AddEditNoteUiEvent.EnteredTitle -> {
                 _uiState.update {

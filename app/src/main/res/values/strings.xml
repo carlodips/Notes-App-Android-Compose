@@ -23,4 +23,6 @@
 
     <string name="msg_delete">Delete this note?</string>
     <string name="msg_note_deleted">Note Deleted</string>
+    <string name="search">Search</string>
+    <string name="placeholder_search">Search here</string>
 </resources>

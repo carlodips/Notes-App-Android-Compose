@@ -38,4 +38,8 @@ data class Note(
         } else {
             noteBody
         }
+
+    fun doesMatchSearchQuery(query: String): Boolean {
+        return noteTitle.contains(query) || noteBody.contains(query)
+    }
 }

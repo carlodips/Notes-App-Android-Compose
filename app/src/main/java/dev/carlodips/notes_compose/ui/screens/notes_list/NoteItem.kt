@@ -38,7 +38,7 @@ import java.time.LocalDateTime
 fun NoteItem(
     modifier: Modifier = Modifier,
     note: Note,
-    onEditClick: () -> Unit,
+    onItemClick: () -> Unit,
     onDeleteClick: () -> Unit
 ) {
     var isVisible by remember { mutableStateOf(false) }
@@ -46,7 +46,7 @@ fun NoteItem(
 
     BaseCard(
         modifier = modifier.padding(horizontal = 16.dp),
-        onClick = onEditClick,
+        onClick = onItemClick,
         isEnabled = true
     ) {
         Column(
@@ -187,7 +187,7 @@ fun PreviewNoteItem() {
                 notesList.forEach {
                     NoteItem(
                         note = it,
-                        onEditClick = {},
+                        onItemClick = {},
                         onDeleteClick = {}
                     )
 

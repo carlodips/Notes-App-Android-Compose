@@ -79,7 +79,7 @@ fun AddEditNoteScreen(
     LaunchedEffect(uiState.value.shouldAutoFocusBody) {
         if (uiState.value.shouldAutoFocusBody) {
             focusRequester.requestFocus()
-            viewModel.onAddEditNoteEvent(AddEditNoteUiEvent.AutoFocusedBody)
+            viewModel.onUiEvent(AddEditNoteUiEvent.AutoFocusedBody)
         }
     }
 
@@ -91,7 +91,7 @@ fun AddEditNoteScreen(
             }
 
             ScreenMode.ADD, ScreenMode.EDIT -> {
-                viewModel.onAddEditNoteEvent(AddEditNoteUiEvent.SaveNote)
+                viewModel.onUiEvent(AddEditNoteUiEvent.SaveNote)
             }
         }
     }
@@ -140,7 +140,7 @@ fun AddEditNoteScreen(
 
                         if (uiState.value.screenMode != ScreenMode.VIEW) {
                             IconButton(onClick = {
-                                viewModel.onAddEditNoteEvent(AddEditNoteUiEvent.SaveNote)
+                                viewModel.onUiEvent(AddEditNoteUiEvent.SaveNote)
                             }) {
                                 Icon(
                                     imageVector = Icons.Filled.Check,
@@ -154,7 +154,7 @@ fun AddEditNoteScreen(
                                 },
                                 onDelete = {
                                     focusManager.clearFocus()
-                                    viewModel.onAddEditNoteEvent(AddEditNoteUiEvent.DeleteNote)
+                                    viewModel.onUiEvent(AddEditNoteUiEvent.DeleteNote)
                                 }
                             )
                         }
@@ -199,7 +199,7 @@ fun AddEditNoteScreen(
                         },
                     value = uiState.value.title,
                     onValueChange = {
-                        viewModel.onAddEditNoteEvent(AddEditNoteUiEvent.EnteredTitle(it))
+                        viewModel.onUiEvent(AddEditNoteUiEvent.EnteredTitle(it))
                     },
                     placeholder = {
                         Text(text = stringResource(R.string.title))
@@ -234,7 +234,7 @@ fun AddEditNoteScreen(
                         },
                     value = uiState.value.body,
                     onValueChange = {
-                        viewModel.onAddEditNoteEvent(AddEditNoteUiEvent.EnteredBody(it))
+                        viewModel.onUiEvent(AddEditNoteUiEvent.EnteredBody(it))
                     },
                     placeholder = {
                         Text(text = stringResource(R.string.description))
@@ -264,7 +264,7 @@ fun AddEditNoteScreen(
                 message = stringResource(R.string.dialog_msg_undo),
                 onPositiveClick = {
                     focusManager.clearFocus()
-                    viewModel.onAddEditNoteEvent(AddEditNoteUiEvent.UndoChanges)
+                    viewModel.onUiEvent(AddEditNoteUiEvent.UndoChanges)
                 },
             )
         }

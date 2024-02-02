@@ -7,4 +7,5 @@ sealed class NavigationItem(val route: String) {
     data object AddEditNote : NavigationItem("add_edit") {
         const val NOTE_ID = "noteId"
     }
+    data object Search : NavigationItem("search")
 }
