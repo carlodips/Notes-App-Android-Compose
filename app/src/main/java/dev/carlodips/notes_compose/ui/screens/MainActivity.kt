@@ -37,7 +37,13 @@ class MainActivity : ComponentActivity() {
                                 navController.navigate(it)
                             },
                             onNavigateToSearch = {
-                                navController.navigate(NavigationItem.Search.route)
+                                navController.run {
+                                    // Fix for snackbar showing when navigating back to NoteList
+                                    currentBackStackEntry?.savedStateHandle?.remove<String>(
+                                        NavigationItem.NotesList.MESSAGE
+                                    )
+                                    navigate(NavigationItem.Search.route)
+                                }
                             }
                         )
                     }
