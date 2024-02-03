@@ -1,4 +1,4 @@
-package dev.carlodips.notes_compose.ui.screens.notes_list.util
+package dev.carlodips.notes_compose.ui.screens.notes_list.all_notes
 
 import dev.carlodips.notes_compose.domain.model.Note
 

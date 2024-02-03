@@ -25,4 +25,7 @@
     <string name="msg_note_deleted">Note Deleted</string>
     <string name="search">Search</string>
     <string name="placeholder_search">Search here</string>
+
+    <string name="menu_locked_notes">Locked</string>
+    <string name="menu_hidden_notes">Hidden</string>
 </resources>

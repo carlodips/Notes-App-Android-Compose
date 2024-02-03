@@ -10,7 +10,9 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
 import dev.carlodips.notes_compose.ui.screens.add_edit_note.AddEditNoteScreen
-import dev.carlodips.notes_compose.ui.screens.notes_list.NotesListScreen
+import dev.carlodips.notes_compose.ui.screens.notes_list.all_notes.NotesListScreen
+import dev.carlodips.notes_compose.ui.screens.notes_list.hidden_notes.HiddenNotesScreen
+import dev.carlodips.notes_compose.ui.screens.notes_list.locked_notes.LockedNotesScreen
 import dev.carlodips.notes_compose.ui.screens.search.SearchScreen
 import dev.carlodips.notes_compose.ui.theme.NotesComposeTheme
 import dev.carlodips.notes_compose.utils.NavigationItem
@@ -44,6 +46,9 @@ class MainActivity : ComponentActivity() {
                                     )
                                     navigate(NavigationItem.Search.route)
                                 }
+                            },
+                            onNavigateNavDrawer = {
+                                navController.navigate(it)
                             }
                         )
                     }
@@ -76,6 +81,26 @@ class MainActivity : ComponentActivity() {
                                 navController.popBackStack()
                             },
                             onNavigateToViewNote = {
+                                navController.navigate(it)
+                            }
+                        )
+                    }
+
+                    composable(
+                        route = NavigationItem.LockedNotes.route
+                    ) {
+                        LockedNotesScreen(
+                            onNavigateNavDrawer = {
+                                navController.navigate(it)
+                            }
+                        )
+                    }
+
+                    composable(
+                        route = NavigationItem.HiddenNotes.route
+                    ) {
+                        HiddenNotesScreen(
+                            onNavigateNavDrawer = {
                                 navController.navigate(it)
                             }
                         )

@@ -1,13 +1,11 @@
-package dev.carlodips.notes_compose.ui.screens.notes_list
+package dev.carlodips.notes_compose.ui.screens.notes_list.all_notes
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.carlodips.notes_compose.domain.model.Note
 import dev.carlodips.notes_compose.domain.repository.NoteRepository
-import dev.carlodips.notes_compose.ui.screens.notes_list.util.NotesListResultEvent
-import dev.carlodips.notes_compose.ui.screens.notes_list.util.NotesListUiEvent
+import dev.carlodips.notes_compose.ui.screens.navigation_drawer.NavigationDrawerUiState
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,15 +16,18 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NotesListViewModel @Inject constructor(
-    private val app: Application,
     private val repository: NoteRepository
-) : AndroidViewModel(app) {
+) : ViewModel() {
 
     val notesList = repository.getNotes()
 
     private val _uiState = MutableStateFlow(NotesListUiState.DEFAULT)
     val uiState: StateFlow<NotesListUiState>
         get() = _uiState.asStateFlow()
+
+    private val _navDrawerUiState = MutableStateFlow(NavigationDrawerUiState(selectedItemIndex = 0))
+    val navDrawerUiState: StateFlow<NavigationDrawerUiState>
+        get() = _navDrawerUiState.asStateFlow()
 
     private val _eventFlow = MutableSharedFlow<NotesListResultEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
