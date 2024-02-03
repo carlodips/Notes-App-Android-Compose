@@ -83,8 +83,7 @@ fun AddEditNoteScreen(
         }
     }
 
-    // Behavior when back button is triggered.
-    BackHandler(enabled = true) {
+    fun onBackButtonClick() {
         when (uiState.value.screenMode) {
             ScreenMode.VIEW -> {
                 onPopBackStack.invoke("")
@@ -94,6 +93,11 @@ fun AddEditNoteScreen(
                 viewModel.onUiEvent(AddEditNoteUiEvent.SaveNote)
             }
         }
+    }
+
+    // Behavior when back button is triggered.
+    BackHandler(enabled = true) {
+        onBackButtonClick()
     }
 
     Surface(
@@ -107,19 +111,9 @@ fun AddEditNoteScreen(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         titleContentColor = MaterialTheme.colorScheme.primary,
                     ),
-                    title = {
-                        /*Text(
-                            if (uiState.value.isEdit) {
-                                stringResource(id = R.string.edit_note)
-                            } else {
-                                stringResource(id = R.string.add_note)
-                            },
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )*/
-                    },
+                    title = {},
                     navigationIcon = {
-                        IconButton(onClick = { /*TODO: Show dialog kung gusto save changes*/ }) {
+                        IconButton(onClick = { onBackButtonClick() }) {
                             Icon(
                                 imageVector = Icons.Filled.ArrowBack,
                                 contentDescription = null
