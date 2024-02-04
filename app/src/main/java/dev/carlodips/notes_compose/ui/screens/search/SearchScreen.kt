@@ -36,7 +36,7 @@ import dev.carlodips.notes_compose.ui.component.BaseCard
 import dev.carlodips.notes_compose.ui.component.CustomSearchBar
 import dev.carlodips.notes_compose.ui.screens.notes_list.NoteItem
 import dev.carlodips.notes_compose.ui.screens.search.util.SearchUiEvent
-import dev.carlodips.notes_compose.utils.NavigationItem
+import dev.carlodips.notes_compose.utils.ScreenRoute
 
 // TODO:
 //  1. Highlight yung part ng text na matched dun sa query
@@ -116,7 +116,7 @@ fun SearchScreen(
                             note = note,
                             onItemClick = {
                                 onNavigateToViewNote.invoke(
-                                    NavigationItem.AddEditNote.route + "?noteId=${note.noteId}"
+                                    ScreenRoute.AddEditNote.route + "?noteId=${note.noteId}"
                                 )
                             },
                             onDeleteClick = {}

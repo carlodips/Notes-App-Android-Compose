@@ -1,4 +1,4 @@
-package dev.carlodips.notes_compose.ui.screens.notes_list.all_notes
+package dev.carlodips.notes_compose.ui.screens.notes_list
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -46,8 +46,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.carlodips.notes_compose.R
 import dev.carlodips.notes_compose.ui.screens.navigation_drawer.NavigationDrawer
-import dev.carlodips.notes_compose.ui.screens.notes_list.NoteItem
-import dev.carlodips.notes_compose.utils.NavigationItem
+import dev.carlodips.notes_compose.utils.NoteListMode
+import dev.carlodips.notes_compose.utils.ScreenRoute
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -63,8 +63,7 @@ fun NotesListScreen(
     viewModel: NotesListViewModel = hiltViewModel(),
     messageFromAddEdit: String,
     onNavigateToAddEdit: (route: String) -> Unit,
-    onNavigateToSearch: () -> Unit,
-    onNavigateNavDrawer: (String) -> Unit
+    onNavigateToSearch: () -> Unit
 ) {
     val notesList = viewModel.notesList.collectAsState(initial = null)
     val snackBarHostState = remember { SnackbarHostState() }
@@ -91,7 +90,9 @@ fun NotesListScreen(
     NavigationDrawer(
         uiState = navDrawerUiState.value,
         drawerState = drawerState,
-        onNavigate = onNavigateNavDrawer
+        onNavigate = {
+            viewModel.onEvent(NotesListUiEvent.DrawerMenuClick(it))
+        }
     ) {
         Surface(
             modifier = modifier.fillMaxSize(),
@@ -103,7 +104,7 @@ fun NotesListScreen(
                 },
                 floatingActionButton = {
                     FloatingActionButton(onClick = {
-                        onNavigateToAddEdit.invoke(NavigationItem.AddEditNote.route)
+                        onNavigateToAddEdit.invoke(ScreenRoute.AddEditNote.route)
                     }) {
                         Icon(Icons.Filled.Add, null)
                     }
@@ -115,8 +116,22 @@ fun NotesListScreen(
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
                         title = {
+                            val appBarTitle = when (navDrawerUiState.value.selectedMode) {
+                                NoteListMode.ALL -> {
+                                    stringResource(id = R.string.notes)
+                                }
+
+                                NoteListMode.LOCKED -> {
+                                    stringResource(id = R.string.menu_locked_notes)
+                                }
+
+                                else -> {
+                                    stringResource(id = R.string.menu_hidden_notes)
+                                }
+                            }
+
                             Text(
-                                stringResource(id = R.string.notes),
+                                appBarTitle,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
                             )
@@ -195,7 +210,7 @@ fun NotesListScreen(
                                 note = note,
                                 onItemClick = {
                                     onNavigateToAddEdit.invoke(
-                                        NavigationItem.AddEditNote.route + "?noteId=${note.noteId}"
+                                        ScreenRoute.AddEditNote.route + "?noteId=${note.noteId}"
                                     )
                                 },
                                 onDeleteClick = {

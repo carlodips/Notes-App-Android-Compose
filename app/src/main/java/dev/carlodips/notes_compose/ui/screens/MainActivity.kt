@@ -10,12 +10,10 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
 import dev.carlodips.notes_compose.ui.screens.add_edit_note.AddEditNoteScreen
-import dev.carlodips.notes_compose.ui.screens.notes_list.all_notes.NotesListScreen
-import dev.carlodips.notes_compose.ui.screens.notes_list.hidden_notes.HiddenNotesScreen
-import dev.carlodips.notes_compose.ui.screens.notes_list.locked_notes.LockedNotesScreen
+import dev.carlodips.notes_compose.ui.screens.notes_list.NotesListScreen
 import dev.carlodips.notes_compose.ui.screens.search.SearchScreen
 import dev.carlodips.notes_compose.ui.theme.NotesComposeTheme
-import dev.carlodips.notes_compose.utils.NavigationItem
+import dev.carlodips.notes_compose.utils.ScreenRoute
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -26,11 +24,11 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 NavHost(
                     navController = navController,
-                    startDestination = NavigationItem.NotesList.route
+                    startDestination = ScreenRoute.NotesList.route
                 ) {
-                    composable(NavigationItem.NotesList.route) { entry ->
+                    composable(ScreenRoute.NotesList.route) { entry ->
                         val messageFromAddEditScreen = entry.savedStateHandle.get<String>(
-                            NavigationItem.NotesList.MESSAGE
+                            ScreenRoute.NotesList.MESSAGE
                         ) ?: ""
 
                         NotesListScreen(
@@ -42,22 +40,19 @@ class MainActivity : ComponentActivity() {
                                 navController.run {
                                     // Fix for snackbar showing when navigating back to NoteList
                                     currentBackStackEntry?.savedStateHandle?.remove<String>(
-                                        NavigationItem.NotesList.MESSAGE
+                                        ScreenRoute.NotesList.MESSAGE
                                     )
-                                    navigate(NavigationItem.Search.route)
+                                    navigate(ScreenRoute.Search.route)
                                 }
-                            },
-                            onNavigateNavDrawer = {
-                                navController.navigate(it)
                             }
                         )
                     }
 
                     composable(
-                        route = NavigationItem.AddEditNote.route +
-                                "?noteId={${NavigationItem.AddEditNote.NOTE_ID}}",
+                        route = ScreenRoute.AddEditNote.route +
+                                "?noteId={${ScreenRoute.AddEditNote.NOTE_ID}}",
                         arguments = listOf(
-                            navArgument(NavigationItem.AddEditNote.NOTE_ID) {
+                            navArgument(ScreenRoute.AddEditNote.NOTE_ID) {
                                 type = NavType.IntType
                                 defaultValue = -1
                             }
@@ -66,7 +61,7 @@ class MainActivity : ComponentActivity() {
                         AddEditNoteScreen(onPopBackStack = { messageForSnackBar ->
                             // For displaying messages for Snackbar
                             navController.previousBackStackEntry?.savedStateHandle?.set(
-                                NavigationItem.NotesList.MESSAGE,
+                                ScreenRoute.NotesList.MESSAGE,
                                 messageForSnackBar
                             )
                             navController.popBackStack()
@@ -74,33 +69,13 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable(
-                        route = NavigationItem.Search.route
+                        route = ScreenRoute.Search.route
                     ) {
                         SearchScreen(
                             onPopBackStack = {
                                 navController.popBackStack()
                             },
                             onNavigateToViewNote = {
-                                navController.navigate(it)
-                            }
-                        )
-                    }
-
-                    composable(
-                        route = NavigationItem.LockedNotes.route
-                    ) {
-                        LockedNotesScreen(
-                            onNavigateNavDrawer = {
-                                navController.navigate(it)
-                            }
-                        )
-                    }
-
-                    composable(
-                        route = NavigationItem.HiddenNotes.route
-                    ) {
-                        HiddenNotesScreen(
-                            onNavigateNavDrawer = {
                                 navController.navigate(it)
                             }
                         )

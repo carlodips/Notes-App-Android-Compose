@@ -4,4 +4,6 @@ sealed class AddEditNoteResultEvent {
     data object NoteSaved : AddEditNoteResultEvent()
     data object NoteDeleted : AddEditNoteResultEvent()
     data class NoteDiscarded(val isEdit: Boolean = false) : AddEditNoteResultEvent()
+    data object NoteHidden : AddEditNoteResultEvent()
+    data object NoteLocked : AddEditNoteResultEvent()
 }

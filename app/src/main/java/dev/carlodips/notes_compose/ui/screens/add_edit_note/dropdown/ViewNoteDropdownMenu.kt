@@ -23,11 +23,13 @@ import dev.carlodips.notes_compose.R
 import dev.carlodips.notes_compose.ui.component.BaseDialog
 
 @Composable
-fun EditNoteDropdownMenu(
+fun ViewNoteDropdownMenu(
     onHide: () -> Unit,
     onDelete: () -> Unit
 ) {
+    var showHideDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
+
     var isVisible by remember { mutableStateOf(false) }
 
     Box(
@@ -52,8 +54,7 @@ fun EditNoteDropdownMenu(
                         )
                     },
                     onClick = {
-                        // TODO: Hide
-                        onHide.invoke()
+                        showHideDialog = !showHideDialog
                         isVisible = !isVisible
                     }
                 )
@@ -82,6 +83,17 @@ fun EditNoteDropdownMenu(
             message = stringResource(R.string.msg_delete),
             onPositiveClick = {
                 onDelete.invoke()
+            },
+        )
+    }
+
+    if (showHideDialog) {
+        BaseDialog(
+            setShowDialog = { showHideDialog = it },
+            title = stringResource(id = R.string.hide),
+            message = stringResource(R.string.msg_hide_this_note),
+            onPositiveClick = {
+                onHide.invoke()
             },
         )
     }

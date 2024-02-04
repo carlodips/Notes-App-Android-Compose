@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 
 class NotesRepositoryImpl(
     private val dao: NotesDao
-): NoteRepository {
+) : NoteRepository {
     override suspend fun insertNote(note: Note): Long {
         return dao.insertNote(note)
     }
@@ -22,6 +22,14 @@ class NotesRepositoryImpl(
 
     override fun getNotes(): Flow<List<Note>> {
         return dao.getNotes()
+    }
+
+    override suspend fun setHiddenNote(noteId: Int, isHidden: Boolean) {
+        dao.setHiddenNote(noteId, isHidden)
+    }
+
+    override suspend fun setLockedNote(noteId: Int, isLocked: Boolean) {
+        dao.setLockedNote(noteId, isLocked)
     }
 
 }

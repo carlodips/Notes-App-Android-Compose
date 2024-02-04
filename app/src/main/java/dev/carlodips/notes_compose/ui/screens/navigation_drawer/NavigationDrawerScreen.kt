@@ -26,7 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import dev.carlodips.notes_compose.R
 import dev.carlodips.notes_compose.domain.model.NavigationMenu
-import dev.carlodips.notes_compose.utils.NavigationItem
+import dev.carlodips.notes_compose.utils.NoteListMode
 import kotlinx.coroutines.launch
 
 // TODO: Add Delete menu
@@ -34,7 +34,7 @@ import kotlinx.coroutines.launch
 fun NavigationDrawer(
     drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed),
     uiState: NavigationDrawerUiState,
-    onNavigate: (String) -> Unit,
+    onNavigate: (NoteListMode) -> Unit,
     content: @Composable () -> Unit
 ) {
     val items = listOf(
@@ -42,20 +42,20 @@ fun NavigationDrawer(
             title = stringResource(id = R.string.notes),
             selectedIcon = Icons.Filled.List,
             unselectedIcon = Icons.Outlined.List,
-            route = NavigationItem.NotesList.route
+            noteListMode = NoteListMode.ALL
         ),
         NavigationMenu(
             title = stringResource(R.string.menu_locked_notes),
             selectedIcon = Icons.Filled.Lock,
             unselectedIcon = Icons.Outlined.Lock,
             badgeCount = 45,
-            route = NavigationItem.LockedNotes.route
+            noteListMode = NoteListMode.LOCKED
         ),
         NavigationMenu(
             title = stringResource(R.string.menu_hidden_notes),
             selectedIcon = Icons.Filled.Face,
             unselectedIcon = Icons.Outlined.Face,
-            route = NavigationItem.HiddenNotes.route
+            noteListMode = NoteListMode.HIDDEN
         )
     )
 
@@ -64,15 +64,15 @@ fun NavigationDrawer(
         drawerContent = {
             ModalDrawerSheet {
                 Spacer(modifier = Modifier.height(16.dp))
-                items.forEachIndexed { index, item ->
+                items.forEach { item ->
                     NavigationDrawerItem(
                         label = {
                             Text(text = item.title)
                         },
-                        selected = index == uiState.selectedItemIndex,
+                        selected = item.noteListMode == uiState.selectedMode,
                         onClick = {
-                            if (index != uiState.selectedItemIndex) {
-                                onNavigate.invoke(item.route)
+                            if (item.noteListMode != uiState.selectedMode) {
+                                onNavigate.invoke(item.noteListMode)
                             }
                             scope.launch {
                                 drawerState.close()
@@ -80,7 +80,7 @@ fun NavigationDrawer(
                         },
                         icon = {
                             Icon(
-                                imageVector = if (index == uiState.selectedItemIndex) {
+                                imageVector = if (item.noteListMode == uiState.selectedMode) {
                                     item.selectedIcon
                                 } else item.unselectedIcon,
                                 contentDescription = item.title

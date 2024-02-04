@@ -50,7 +50,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.carlodips.notes_compose.R
 import dev.carlodips.notes_compose.ui.component.BaseDialog
-import dev.carlodips.notes_compose.ui.screens.add_edit_note.dropdown.EditNoteDropdownMenu
+import dev.carlodips.notes_compose.ui.screens.add_edit_note.dropdown.ViewNoteDropdownMenu
 import dev.carlodips.notes_compose.ui.screens.add_edit_note.util.AddEditNoteResultEvent
 import dev.carlodips.notes_compose.ui.screens.add_edit_note.util.AddEditNoteUiEvent
 import dev.carlodips.notes_compose.utils.ScreenMode
@@ -142,9 +142,11 @@ fun AddEditNoteScreen(
                                 )
                             }
                         } else {
-                            EditNoteDropdownMenu(
+                            ViewNoteDropdownMenu(
                                 onHide = {
-                                    // TODO: Add hide functionality
+                                    focusManager.clearFocus()
+                                    // TODO: dapat opposite ng current value ni shouldHide
+                                    viewModel.onUiEvent(AddEditNoteUiEvent.HideNote(true))
                                 },
                                 onDelete = {
                                     focusManager.clearFocus()
@@ -284,6 +286,13 @@ fun AddEditNoteScreen(
                     }
 
                     onPopBackStack.invoke(message)
+                }
+
+                is AddEditNoteResultEvent.NoteHidden -> {
+                    onPopBackStack.invoke(context.getString(R.string.msg_note_hidden_success))
+                }
+                AddEditNoteResultEvent.NoteLocked -> {
+                    onPopBackStack.invoke(context.getString(R.string.msg_note_locked_success))
                 }
             }
         }

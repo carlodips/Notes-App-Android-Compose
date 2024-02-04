@@ -8,8 +8,8 @@ import dev.carlodips.notes_compose.domain.model.Note
 import dev.carlodips.notes_compose.domain.repository.NoteRepository
 import dev.carlodips.notes_compose.ui.screens.add_edit_note.util.AddEditNoteResultEvent
 import dev.carlodips.notes_compose.ui.screens.add_edit_note.util.AddEditNoteUiEvent
-import dev.carlodips.notes_compose.utils.NavigationItem
 import dev.carlodips.notes_compose.utils.ScreenMode
+import dev.carlodips.notes_compose.utils.ScreenRoute
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -38,7 +38,7 @@ class AddEditNoteViewModel @Inject constructor(
     private var oldNote: Note? = null // For revert
 
     init {
-        val noteId = savedStateHandle.get<Int>(NavigationItem.AddEditNote.NOTE_ID) ?: -1
+        val noteId = savedStateHandle.get<Int>(ScreenRoute.AddEditNote.NOTE_ID) ?: -1
 
         if (noteId != -1) {
             viewModelScope.launch {
@@ -51,7 +51,9 @@ class AddEditNoteViewModel @Inject constructor(
                             title = note.noteTitle,
                             body = note.noteBody,
                             lastEdited = note.formattedDateUpdated,
-                            screenMode = ScreenMode.VIEW
+                            screenMode = ScreenMode.VIEW,
+                            isHidden = note.isNoteHidden,
+                            isLocked = note.isNoteLocked
                         )
                     }
                 }
@@ -86,6 +88,14 @@ class AddEditNoteViewModel @Inject constructor(
 
             is AddEditNoteUiEvent.DeleteNote -> {
                 onDeleteNote()
+            }
+
+            is AddEditNoteUiEvent.HideNote -> {
+                onHideNote(shouldHide = event.shouldHide)
+            }
+
+            is AddEditNoteUiEvent.LockNote -> {
+                onLockedNote(shouldLock = event.shouldLock)
             }
 
             is AddEditNoteUiEvent.SaveNote -> {
@@ -138,6 +148,30 @@ class AddEditNoteViewModel @Inject constructor(
         }
     }
 
+    private fun onHideNote(shouldHide: Boolean) {
+        viewModelScope.launch {
+            currentNoteId?.let {
+                repository.setHiddenNote(
+                    noteId = it,
+                    isHidden = shouldHide
+                )
+            }
+            _eventFlow.emit(AddEditNoteResultEvent.NoteHidden)
+        }
+    }
+
+    private fun onLockedNote(shouldLock: Boolean) {
+        viewModelScope.launch {
+            currentNoteId?.let {
+                repository.setLockedNote(
+                    noteId = it,
+                    isLocked = shouldLock
+                )
+            }
+            _eventFlow.emit(AddEditNoteResultEvent.NoteLocked)
+        }
+    }
+
     fun setScreenMode(screenMode: ScreenMode) {
         _uiState.update {
             it.copy(screenMode = screenMode)
@@ -170,7 +204,9 @@ class AddEditNoteViewModel @Inject constructor(
             noteTitle = uiState.value.title,
             noteBody = uiState.value.body,
             dateAdded = dateAdded ?: LocalDateTime.now(),
-            dateUpdated = LocalDateTime.now()
+            dateUpdated = LocalDateTime.now(),
+            isNoteHidden = uiState.value.isHidden,
+            isNoteLocked = uiState.value.isLocked
         )
 
         viewModelScope.launch {

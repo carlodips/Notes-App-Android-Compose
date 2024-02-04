@@ -11,4 +11,8 @@ interface NoteRepository {
     suspend fun getNoteById(id: Int): Note?
 
     fun getNotes(): Flow<List<Note>>
+
+    suspend fun setHiddenNote(noteId: Int, isHidden: Boolean)
+
+    suspend fun setLockedNote(noteId: Int, isLocked: Boolean)
 }

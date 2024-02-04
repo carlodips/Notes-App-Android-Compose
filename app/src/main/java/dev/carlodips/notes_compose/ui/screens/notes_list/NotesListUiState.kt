@@ -1,4 +1,4 @@
-package dev.carlodips.notes_compose.ui.screens.notes_list.all_notes
+package dev.carlodips.notes_compose.ui.screens.notes_list
 
 data class NotesListUiState(
     //val shouldShowSnackbar: Boolean,
