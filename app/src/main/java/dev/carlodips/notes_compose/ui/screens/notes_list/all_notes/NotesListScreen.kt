@@ -1,9 +1,12 @@
 package dev.carlodips.notes_compose.ui.screens.notes_list.all_notes
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -11,6 +14,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -33,6 +37,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -61,7 +66,7 @@ fun NotesListScreen(
     onNavigateToSearch: () -> Unit,
     onNavigateNavDrawer: (String) -> Unit
 ) {
-    val notesList = viewModel.notesList.collectAsState(initial = emptyList())
+    val notesList = viewModel.notesList.collectAsState(initial = null)
     val snackBarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
@@ -139,7 +144,7 @@ fun NotesListScreen(
                             }
 
                             IconButton(onClick = {
-                                // TODO: Show menuu
+                                // TODO: Show menu
                             }) {
                                 Icon(
                                     imageVector = Icons.Filled.MoreVert,
@@ -160,7 +165,20 @@ fun NotesListScreen(
                         Spacer(modifier = Modifier.height(24.dp))
                     }
 
-                    if (notesList.value.isEmpty()) {
+                    if (notesList.value == null) {
+                        item {
+                            Column(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.width(32.dp),
+                                    color = MaterialTheme.colorScheme.secondary,
+                                    trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                                )
+                            }
+                        }
+                    } else if (notesList.value!!.isEmpty()) {
                         item {
                             Spacer(modifier = Modifier.height(16.dp))
                             Text(
@@ -172,7 +190,7 @@ fun NotesListScreen(
                             )
                         }
                     } else {
-                        items(notesList.value) { note ->
+                        items(notesList.value!!) { note ->
                             NoteItem(
                                 note = note,
                                 onItemClick = {
