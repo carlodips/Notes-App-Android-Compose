@@ -126,7 +126,7 @@ fun NotesListScreen(
                                 }
 
                                 else -> {
-                                    stringResource(id = R.string.menu_hidden_notes)
+                                    stringResource(id = R.string.menu_archived_notes)
                                 }
                             }
 

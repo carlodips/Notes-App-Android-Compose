@@ -12,7 +12,7 @@ interface NoteRepository {
 
     fun getNotes(): Flow<List<Note>>
 
-    suspend fun setHiddenNote(noteId: Int, isHidden: Boolean)
+    suspend fun setArchivedNote(noteId: Int, isArchived: Boolean)
 
     suspend fun setLockedNote(noteId: Int, isLocked: Boolean)
 }

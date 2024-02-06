@@ -52,7 +52,7 @@ class AddEditNoteViewModel @Inject constructor(
                             body = note.noteBody,
                             lastEdited = note.formattedDateUpdated,
                             screenMode = ScreenMode.VIEW,
-                            isHidden = note.isNoteHidden,
+                            isArchived = note.isNoteArchived,
                             isLocked = note.isNoteLocked
                         )
                     }
@@ -90,8 +90,8 @@ class AddEditNoteViewModel @Inject constructor(
                 onDeleteNote()
             }
 
-            is AddEditNoteUiEvent.HideNote -> {
-                onHideNote(shouldHide = event.shouldHide)
+            is AddEditNoteUiEvent.ArchiveNote -> {
+                onArchiveNote(shouldArchive = event.shouldArchive)
             }
 
             is AddEditNoteUiEvent.LockNote -> {
@@ -148,15 +148,15 @@ class AddEditNoteViewModel @Inject constructor(
         }
     }
 
-    private fun onHideNote(shouldHide: Boolean) {
+    private fun onArchiveNote(shouldArchive: Boolean) {
         viewModelScope.launch {
             currentNoteId?.let {
-                repository.setHiddenNote(
+                repository.setArchivedNote(
                     noteId = it,
-                    isHidden = shouldHide
+                    isArchived = shouldArchive
                 )
             }
-            _eventFlow.emit(AddEditNoteResultEvent.NoteHidden)
+            _eventFlow.emit(AddEditNoteResultEvent.NoteArchived)
         }
     }
 
@@ -205,7 +205,7 @@ class AddEditNoteViewModel @Inject constructor(
             noteBody = uiState.value.body,
             dateAdded = dateAdded ?: LocalDateTime.now(),
             dateUpdated = LocalDateTime.now(),
-            isNoteHidden = uiState.value.isHidden,
+            isNoteArchived = uiState.value.isArchived,
             isNoteLocked = uiState.value.isLocked
         )
 

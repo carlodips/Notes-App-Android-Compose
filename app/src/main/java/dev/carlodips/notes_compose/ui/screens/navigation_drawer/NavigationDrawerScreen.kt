@@ -13,6 +13,7 @@ import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
@@ -52,10 +53,10 @@ fun NavigationDrawer(
             noteListMode = NoteListMode.LOCKED
         ),
         NavigationMenu(
-            title = stringResource(R.string.menu_hidden_notes),
+            title = stringResource(R.string.menu_archived_notes),
             selectedIcon = Icons.Filled.Face,
             unselectedIcon = Icons.Outlined.Face,
-            noteListMode = NoteListMode.HIDDEN
+            noteListMode = NoteListMode.ARCHIVED
         )
     )
 
@@ -63,6 +64,16 @@ fun NavigationDrawer(
     ModalNavigationDrawer(
         drawerContent = {
             ModalDrawerSheet {
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Text(
+                    modifier = Modifier.padding(
+                        horizontal = 16.dp
+                    ),
+                    text = stringResource(id = R.string.app_name),
+                    style = MaterialTheme.typography.headlineSmall
+                )
+
                 Spacer(modifier = Modifier.height(16.dp))
                 items.forEach { item ->
                     NavigationDrawerItem(

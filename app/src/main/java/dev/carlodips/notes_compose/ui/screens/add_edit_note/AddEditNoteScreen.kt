@@ -143,10 +143,10 @@ fun AddEditNoteScreen(
                             }
                         } else {
                             ViewNoteDropdownMenu(
-                                onHide = {
+                                onArchive = {
                                     focusManager.clearFocus()
-                                    // TODO: dapat opposite ng current value ni shouldHide
-                                    viewModel.onUiEvent(AddEditNoteUiEvent.HideNote(true))
+                                    // TODO: dapat opposite ng current value ni shouldArchive
+                                    viewModel.onUiEvent(AddEditNoteUiEvent.ArchiveNote(true))
                                 },
                                 onDelete = {
                                     focusManager.clearFocus()
@@ -288,8 +288,8 @@ fun AddEditNoteScreen(
                     onPopBackStack.invoke(message)
                 }
 
-                is AddEditNoteResultEvent.NoteHidden -> {
-                    onPopBackStack.invoke(context.getString(R.string.msg_note_hidden_success))
+                is AddEditNoteResultEvent.NoteArchived -> {
+                    onPopBackStack.invoke(context.getString(R.string.msg_note_archived_success))
                 }
                 AddEditNoteResultEvent.NoteLocked -> {
                     onPopBackStack.invoke(context.getString(R.string.msg_note_locked_success))

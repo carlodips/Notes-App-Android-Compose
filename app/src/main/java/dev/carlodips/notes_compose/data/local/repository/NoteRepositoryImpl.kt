@@ -30,8 +30,8 @@ class NoteRepositoryImpl(
         }
     }
 
-    override suspend fun setHiddenNote(noteId: Int, isHidden: Boolean) {
-        dao.setHiddenNote(noteId, isHidden)
+    override suspend fun setArchivedNote(noteId: Int, isArchived: Boolean) {
+        dao.setArchivedNote(noteId, isArchived)
     }
 
     override suspend fun setLockedNote(noteId: Int, isLocked: Boolean) {

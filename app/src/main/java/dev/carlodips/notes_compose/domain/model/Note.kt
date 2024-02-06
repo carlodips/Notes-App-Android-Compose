@@ -1,6 +1,5 @@
 package dev.carlodips.notes_compose.domain.model
 
-import androidx.room.Entity
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -15,7 +14,7 @@ data class Note(
 
     val dateUpdated: LocalDateTime,
 
-    val isNoteHidden: Boolean = false,
+    val isNoteArchived: Boolean = false,
 
     val isNoteLocked: Boolean = false,
 

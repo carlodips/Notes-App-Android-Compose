@@ -12,7 +12,7 @@ data class AddEditNoteUiState(
     val screenMode: ScreenMode,
     //val hasDiscardNote: Boolean,
     val shouldAutoFocusBody: Boolean,
-    val isHidden: Boolean,
+    val isArchived: Boolean,
     val isLocked: Boolean
     //val isDoneDeleting: Boolean
 ) {
@@ -26,7 +26,7 @@ data class AddEditNoteUiState(
             screenMode = ScreenMode.ADD,
 //            hasDiscardNote = false,
             shouldAutoFocusBody = false,
-            isHidden = false,
+            isArchived = false,
             isLocked = false
 //            isDoneDeleting = false
         )

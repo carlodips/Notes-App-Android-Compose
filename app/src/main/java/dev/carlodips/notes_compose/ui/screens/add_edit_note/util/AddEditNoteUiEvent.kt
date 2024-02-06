@@ -7,7 +7,7 @@ sealed class AddEditNoteUiEvent {
 
     data object DeleteNote : AddEditNoteUiEvent()
 
-    data class HideNote(val shouldHide: Boolean) : AddEditNoteUiEvent()
+    data class ArchiveNote(val shouldArchive: Boolean) : AddEditNoteUiEvent()
 
     data class LockNote(val shouldLock: Boolean) : AddEditNoteUiEvent()
 

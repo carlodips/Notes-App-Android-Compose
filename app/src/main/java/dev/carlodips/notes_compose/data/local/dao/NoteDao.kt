@@ -22,10 +22,10 @@ interface NoteDao {
     @Query("SELECT * FROM Note")
     fun getNotes(): Flow<List<NoteEntity>>
 
-    @Query("UPDATE Note SET isHidden = :isHidden WHERE noteId = :noteId")
-    suspend fun setHiddenNote(
+    @Query("UPDATE Note SET isArchived = :isArchived WHERE noteId = :noteId")
+    suspend fun setArchivedNote(
         noteId: Int,
-        isHidden: Boolean
+        isArchived: Boolean
     )
 
     @Query("UPDATE Note SET isLocked = :isLocked WHERE noteId = :noteId")

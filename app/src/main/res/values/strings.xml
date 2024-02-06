@@ -19,8 +19,8 @@
     <string name="save">Save</string>
     <string name="display_last_edited">Edited: %1$s</string>
     <string name="dialog_msg_undo">Are you sure you want to undo changes made?</string>
-    <string name="hide">Hide</string>
-    <string name="msg_hide_this_note">Hide this note?</string>
+    <string name="archive">Archive</string>
+    <string name="msg_archive_this_note">Archive this note?</string>
 
     <string name="msg_delete">Delete this note?</string>
     <string name="msg_note_deleted">Note Deleted</string>
@@ -28,8 +28,8 @@
     <string name="placeholder_search">Search here</string>
 
     <string name="menu_locked_notes">Locked</string>
-    <string name="menu_hidden_notes">Hidden</string>
-    <string name="msg_note_hidden_success">Note has been hidden</string>
+    <string name="menu_archived_notes">Archive</string>
+    <string name="msg_note_archived_success">Note has been archived</string>
     <string name="msg_note_locked_success">Note has been locked</string>
 
 </resources>

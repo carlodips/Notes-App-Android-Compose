@@ -42,8 +42,8 @@ class NotesListViewModel @Inject constructor(
         if (mode == NoteListMode.ALL) { //return the whole list of notes if not is typed //TODO: Change to empty list?
             notes
         } else {
-            if (mode == NoteListMode.HIDDEN) {
-                notes.filter { it.isNoteHidden }
+            if (mode == NoteListMode.ARCHIVED) {
+                notes.filter { it.isNoteArchived }
             } else {
                 notes.filter { it.isNoteLocked }
             }

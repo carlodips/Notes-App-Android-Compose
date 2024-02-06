@@ -32,8 +32,8 @@ data class NoteEntity(
     @ColumnInfo(name = "dateUpdated")
     val dateUpdated: LocalDateTime,
 
-    @ColumnInfo(name = "isHidden")
-    val isNoteHidden: Boolean = false,
+    @ColumnInfo(name = "isArchived")
+    val isNoteArchived: Boolean = false,
 
     @ColumnInfo(name = "isLocked")
     val isNoteLocked: Boolean = false,
@@ -49,7 +49,7 @@ data class NoteEntity(
             noteBody = note.noteBody,
             dateAdded = note.dateAdded,
             dateUpdated = note.dateUpdated,
-            isNoteHidden = note.isNoteHidden,
+            isNoteArchived = note.isNoteArchived,
             isNoteLocked = note.isNoteLocked,
             folderId = note.folderId
         )
@@ -61,7 +61,7 @@ data class NoteEntity(
         noteBody = noteBody,
         dateAdded = dateAdded,
         dateUpdated = dateUpdated,
-        isNoteHidden = isNoteHidden,
+        isNoteArchived = isNoteArchived,
         isNoteLocked = isNoteLocked,
         folderId = folderId
     )

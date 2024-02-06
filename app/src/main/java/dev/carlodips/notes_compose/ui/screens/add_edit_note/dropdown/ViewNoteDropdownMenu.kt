@@ -24,10 +24,10 @@ import dev.carlodips.notes_compose.ui.component.BaseDialog
 
 @Composable
 fun ViewNoteDropdownMenu(
-    onHide: () -> Unit,
+    onArchive: () -> Unit,
     onDelete: () -> Unit
 ) {
-    var showHideDialog by remember { mutableStateOf(false) }
+    var showArchiveDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
 
     var isVisible by remember { mutableStateOf(false) }
@@ -50,11 +50,11 @@ fun ViewNoteDropdownMenu(
                     text = {
                         Text(
                             style = MaterialTheme.typography.bodyMedium,
-                            text = stringResource(R.string.hide)
+                            text = stringResource(R.string.archive)
                         )
                     },
                     onClick = {
-                        showHideDialog = !showHideDialog
+                        showArchiveDialog = !showArchiveDialog
                         isVisible = !isVisible
                     }
                 )
@@ -87,13 +87,13 @@ fun ViewNoteDropdownMenu(
         )
     }
 
-    if (showHideDialog) {
+    if (showArchiveDialog) {
         BaseDialog(
-            setShowDialog = { showHideDialog = it },
-            title = stringResource(id = R.string.hide),
-            message = stringResource(R.string.msg_hide_this_note),
+            setShowDialog = { showArchiveDialog = it },
+            title = stringResource(id = R.string.archive),
+            message = stringResource(R.string.msg_archive_this_note),
             onPositiveClick = {
-                onHide.invoke()
+                onArchive.invoke()
             },
         )
     }
