@@ -37,4 +37,16 @@ class NoteRepositoryImpl(
     override suspend fun setLockedNote(noteId: Int, isLocked: Boolean) {
         dao.setLockedNote(noteId, isLocked)
     }
+
+    override fun getAllNotesCount(): Flow<Int> {
+        return dao.getAllNotesCount()
+    }
+
+    override fun getLockedNotesCount(): Flow<Int> {
+        return dao.getLockedNotesCount()
+    }
+
+    override fun getArchiveNotesCount(): Flow<Int> {
+        return dao.getArchivedNotesCount()
+    }
 }

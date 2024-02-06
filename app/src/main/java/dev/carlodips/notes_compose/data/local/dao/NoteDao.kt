@@ -33,4 +33,13 @@ interface NoteDao {
         noteId: Int,
         isLocked: Boolean
     )
+
+    @Query("SELECT COUNT(*) FROM Note WHERE isArchived =:isArchived")
+    fun getAllNotesCount(isArchived: Boolean = false): Flow<Int>
+
+    @Query("SELECT COUNT(*) FROM Note WHERE isLocked = :isLocked")
+    fun getLockedNotesCount(isLocked: Boolean = true): Flow<Int>
+
+    @Query("SELECT COUNT(*) FROM Note WHERE isArchived = :isArchived")
+    fun getArchivedNotesCount(isArchived: Boolean = true): Flow<Int>
 }

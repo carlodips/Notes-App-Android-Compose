@@ -24,13 +24,18 @@ class NotesListViewModel @Inject constructor(
     private val repository: NoteRepository
 ) : ViewModel() {
 
-
     private val _uiState = MutableStateFlow(NotesListUiState.DEFAULT)
     val uiState: StateFlow<NotesListUiState>
         get() = _uiState.asStateFlow()
 
     private val _navDrawerUiState =
-        MutableStateFlow(NavigationDrawerUiState(selectedMode = NoteListMode.ALL))
+        MutableStateFlow(NavigationDrawerUiState(
+            selectedMode = NoteListMode.ALL,
+            allNotesCount = repository.getAllNotesCount(),
+            lockedNotesCount = repository.getLockedNotesCount(),
+            archivedNotesCount = repository.getArchiveNotesCount()
+        ))
+
     val navDrawerUiState: StateFlow<NavigationDrawerUiState>
         get() = _navDrawerUiState.asStateFlow()
 
@@ -40,7 +45,7 @@ class NotesListViewModel @Inject constructor(
     ) { navDrawerUiState, notes -> //combine query with _noteList
         val mode = navDrawerUiState.selectedMode
         if (mode == NoteListMode.ALL) { //return the whole list of notes if not is typed //TODO: Change to empty list?
-            notes
+            notes.filter { !it.isNoteArchived }
         } else {
             if (mode == NoteListMode.ARCHIVED) {
                 notes.filter { it.isNoteArchived }
@@ -53,6 +58,10 @@ class NotesListViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = emptyList()
     )
+
+    init {
+        //setupDrawerStateBadgeCount()
+    }
 
     private val _eventFlow = MutableSharedFlow<NotesListResultEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
@@ -94,6 +103,18 @@ class NotesListViewModel @Inject constructor(
             )
         }
     }
+
+    /*private fun setupDrawerStateBadgeCount() {
+        val lockedNotesCount = repository.getLockedNotesCount()
+
+
+        _navDrawerUiState.update {
+            it.copy(
+                allNotesCount = 0,
+                lockedNotesCount = lockedNotesCount.
+            )
+        }
+    }*/
 
     /*fun showSnackbar(snackbarMessage: String, snackbarActionLabel: String = "") {
         _uiState.update {

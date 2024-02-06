@@ -15,4 +15,12 @@ interface NoteRepository {
     suspend fun setArchivedNote(noteId: Int, isArchived: Boolean)
 
     suspend fun setLockedNote(noteId: Int, isLocked: Boolean)
+
+    fun getAllNotesCount(): Flow<Int>
+
+    fun getLockedNotesCount(): Flow<Int>
+
+    fun getArchiveNotesCount(): Flow<Int>
+
+
 }
