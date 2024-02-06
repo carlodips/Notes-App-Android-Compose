@@ -30,7 +30,7 @@ class SearchViewModel @Inject constructor(
     val notesList: StateFlow<List<Note>> =
         combine(uiState, _notesList) { searchUiState, notes -> //combine query with _noteList
             val query = searchUiState.query
-            if (query.isBlank()) { //return the whole list of notes if not is typed //TODO: Change to empty list?
+            if (query.isBlank()) { //return the whole list of notes if not is typed
                 emptyList()
             } else {
                 notes.filter { note -> // filter list based on the query
