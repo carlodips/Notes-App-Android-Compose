@@ -4,7 +4,8 @@ import androidx.test.filters.SmallTest
 import com.google.common.truth.Truth.assertThat
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import dev.carlodips.notes_compose.data.local.NotesDatabase
+import dev.carlodips.notes_compose.data.local.NotesAppDatabase
+import dev.carlodips.notes_compose.data.local.entity.NoteEntity
 import dev.carlodips.notes_compose.domain.model.Note
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -22,12 +23,12 @@ import javax.inject.Named
 
 @SmallTest
 @HiltAndroidTest
-class NotesDaoTest {
+class NoteDaoTest {
     @Inject
     @Named("test_db") //Added named since there is also database from main
-    lateinit var database: NotesDatabase
+    lateinit var database: NotesAppDatabase
 
-    private lateinit var dao: NotesDao
+    private lateinit var dao: NoteDao
 
     @get:Rule
     var hiltRule = HiltAndroidRule(this)
@@ -39,7 +40,7 @@ class NotesDaoTest {
             NotesDatabase::class.java
         ).allowMainThreadQueries().build()*/
         hiltRule.inject()
-        dao = database.dao
+        dao = database.notesDao
     }
 
     @After
@@ -58,7 +59,7 @@ class NotesDaoTest {
             dateUpdated = LocalDateTime.now()
         )
 
-        dao.insertNote(item)
+        dao.insertNote(NoteEntity.toEntity(item))
 
         val latch = CountDownLatch(1)
 
@@ -90,10 +91,10 @@ class NotesDaoTest {
             dateUpdated = LocalDateTime.now()
         )
 
-        dao.insertNote(item1)
-        dao.insertNote(item2)
+        dao.insertNote(NoteEntity.toEntity(item1))
+        dao.insertNote(NoteEntity.toEntity(item2))
 
-        dao.deleteNote(item1)
+        dao.deleteNote(NoteEntity.toEntity(item1))
 
         val latch = CountDownLatch(1)
         val job = async(Dispatchers.IO) {
@@ -116,7 +117,7 @@ class NotesDaoTest {
             dateAdded = LocalDateTime.now(),
             dateUpdated = LocalDateTime.now()
         )
-        dao.insertNote(item)
+        dao.insertNote(NoteEntity.toEntity(item))
 
         // create updated word
         val updatedNote = Note(
@@ -128,7 +129,7 @@ class NotesDaoTest {
         )
 
         // update
-        dao.insertNote(updatedNote)
+        dao.insertNote(NoteEntity.toEntity(updatedNote))
 
         val result = dao.getNoteById(1)
 
@@ -144,7 +145,7 @@ class NotesDaoTest {
             dateAdded = LocalDateTime.now(),
             dateUpdated = LocalDateTime.now()
         )
-        dao.insertNote(item)
+        dao.insertNote(NoteEntity.toEntity(item))
 
         // create updated word
         val updatedNote = Note(
@@ -156,7 +157,7 @@ class NotesDaoTest {
         )
 
         // update
-        dao.insertNote(updatedNote)
+        dao.insertNote(NoteEntity.toEntity(updatedNote))
 
         val result = dao.getNoteById(1)
 

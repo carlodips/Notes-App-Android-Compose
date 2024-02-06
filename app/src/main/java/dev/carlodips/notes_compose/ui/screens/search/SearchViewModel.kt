@@ -19,7 +19,7 @@ import javax.inject.Inject
 // https://medium.com/@yusufyildiz0441/how-to-use-the-combine-function-to-combine-states-in-a-sample-login-app-7193dea89da0
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val repository: NoteRepository
+    repository: NoteRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SearchUiState.DEFAULT)
