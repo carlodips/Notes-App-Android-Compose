@@ -42,9 +42,9 @@ class NotesListViewModel @Inject constructor(
     private val _notesList = repository.getNotes()
     val notesList: StateFlow<List<Note>> = combine(
         navDrawerUiState, _notesList
-    ) { navDrawerUiState, notes -> //combine query with _noteList
+    ) { navDrawerUiState, notes ->
         val mode = navDrawerUiState.selectedMode
-        if (mode == NoteListMode.ALL) { //return the whole list of notes if not is typed //TODO: Change to empty list?
+        if (mode == NoteListMode.ALL) {
             notes.filter { !it.isNoteArchived }
         } else {
             if (mode == NoteListMode.ARCHIVED) {
