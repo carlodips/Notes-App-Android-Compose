@@ -7,4 +7,6 @@ sealed class NotesListUiEvent {
     data class DeleteNote(val note: Note) : NotesListUiEvent()
     data object UndoDeleteNote: NotesListUiEvent()
     data class DrawerMenuClick(val mode: NoteListMode) : NotesListUiEvent()
+
+    data class FolderClick(val selectedFolderId: Int?) : NotesListUiEvent()
 }

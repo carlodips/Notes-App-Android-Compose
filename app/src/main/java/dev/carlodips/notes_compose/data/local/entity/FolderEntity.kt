@@ -3,12 +3,13 @@ package dev.carlodips.notes_compose.data.local.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import dev.carlodips.notes_compose.domain.model.Folder
 import java.time.LocalDateTime
 
 @Entity(
     tableName = "Folder"
 )
-data class FolderEntity (
+data class FolderEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "folderId")
     val folderId: Int? = null,
@@ -21,4 +22,20 @@ data class FolderEntity (
 
     @ColumnInfo(name = "dateUpdated")
     val dateUpdated: LocalDateTime
-)
+) {
+    companion object {
+        fun toEntity(folder: Folder) = FolderEntity(
+            folderId = folder.folderId,
+            folderName = folder.folderName,
+            dateAdded = folder.dateAdded,
+            dateUpdated = folder.dateUpdated
+        )
+    }
+
+    fun toDomain() = Folder(
+        folderId = folderId,
+        folderName = folderName,
+        dateAdded = dateAdded,
+        dateUpdated = dateUpdated
+    )
+}
