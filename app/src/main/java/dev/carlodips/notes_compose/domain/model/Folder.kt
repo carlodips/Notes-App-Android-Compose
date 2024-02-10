@@ -3,7 +3,7 @@ package dev.carlodips.notes_compose.domain.model
 import java.time.LocalDateTime
 
 data class Folder(
-    val folderId: Int? = null,
+    val folderId: Int? = 0,
 
     val folderName: String,
 

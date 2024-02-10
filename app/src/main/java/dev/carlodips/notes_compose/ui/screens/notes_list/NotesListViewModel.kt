@@ -67,22 +67,23 @@ class NotesListViewModel @Inject constructor(
     )
 
     private val _foldersList = folderRepository.getFolders()
-    val foldersList: StateFlow<List<Folder>> = _foldersList.transform { folderList ->
-        // Show "All" and folder button only
-        val newList = arrayListOf<Folder>()
-        newList.add(Folder.ALL_NOTES)
+    val foldersList: StateFlow<List<Folder>> = _foldersList
+        .transform { folderList ->
+            // Show "All" and folder button only
+            val newList = arrayListOf<Folder>()
+            newList.add(Folder.ALL_NOTES)
 
-        if (folderList.isNotEmpty()) {
-            newList.add(Folder.UNCATEGORIZED)
-            newList.addAll(folderList)
-        }
+            if (folderList.isNotEmpty()) {
+                newList.add(Folder.UNCATEGORIZED)
+                newList.addAll(folderList)
+            }
 
-        emit(newList)
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = emptyList()
-    )
+            emit(newList)
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
 
     private val _eventFlow = MutableSharedFlow<NotesListResultEvent>()
     val eventFlow = _eventFlow.asSharedFlow()

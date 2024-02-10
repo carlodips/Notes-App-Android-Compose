@@ -11,7 +11,7 @@ data class NotesListUiState(
             //shouldShowSnackbar = false,
             snackbarMessage = "",
             snackbarActionLabel = "",
-            selectedFolderId = null
+            selectedFolderId = 0
         )
     }
 }

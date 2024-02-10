@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
 import dev.carlodips.notes_compose.ui.screens.add_edit_note.AddEditNoteScreen
+import dev.carlodips.notes_compose.ui.screens.folders.FolderListScreen
 import dev.carlodips.notes_compose.ui.screens.notes_list.NotesListScreen
 import dev.carlodips.notes_compose.ui.screens.search.SearchScreen
 import dev.carlodips.notes_compose.ui.theme.NotesComposeTheme
@@ -44,6 +45,9 @@ class MainActivity : ComponentActivity() {
                                     )
                                     navigate(ScreenRoute.Search.route)
                                 }
+                            },
+                            onNavigateToFolderList = {
+                                navController.navigate(ScreenRoute.FolderList.route)
                             }
                         )
                     }
@@ -77,6 +81,16 @@ class MainActivity : ComponentActivity() {
                             },
                             onNavigateToViewNote = {
                                 navController.navigate(it)
+                            }
+                        )
+                    }
+
+                    composable(
+                        route = ScreenRoute.FolderList.route
+                    ) {
+                        FolderListScreen(
+                            onPopBackStack = {
+                                navController.popBackStack()
                             }
                         )
                     }

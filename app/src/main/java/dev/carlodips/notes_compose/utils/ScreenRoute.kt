@@ -8,4 +8,6 @@ sealed class ScreenRoute(val route: String) {
         const val NOTE_ID = "noteId"
     }
     data object Search : ScreenRoute("search")
+
+    data object FolderList : ScreenRoute("folders")
 }

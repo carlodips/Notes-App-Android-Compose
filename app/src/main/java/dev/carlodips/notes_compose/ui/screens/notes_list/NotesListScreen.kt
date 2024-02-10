@@ -71,7 +71,8 @@ fun NotesListScreen(
     viewModel: NotesListViewModel = hiltViewModel(),
     messageFromAddEdit: String,
     onNavigateToAddEdit: (route: String) -> Unit,
-    onNavigateToSearch: () -> Unit
+    onNavigateToSearch: () -> Unit,
+    onNavigateToFolderList: () -> Unit
 ) {
     val notesList = viewModel.notesList.collectAsState(initial = null)
     val folderList = viewModel.foldersList.collectAsState(initial = null)
@@ -205,7 +206,9 @@ fun NotesListScreen(
                             }
 
                             ElevatedButton(
-                                onClick = { }) {
+                                onClick = {
+                                    onNavigateToFolderList.invoke()
+                                }) {
                                 Icon(
                                     imageVector = ImageVector.vectorResource(R.drawable.ic_folder),
                                     contentDescription = null

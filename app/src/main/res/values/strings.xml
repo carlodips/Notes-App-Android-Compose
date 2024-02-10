@@ -31,5 +31,6 @@
     <string name="menu_archived_notes">Archive</string>
     <string name="msg_note_archived_success">Note has been archived</string>
     <string name="msg_note_locked_success">Note has been locked</string>
+    <string name="label_folders">Folders</string>
 
 </resources>
