@@ -17,3 +17,6 @@ A simple app where you can perform CRUD operations. This app demonstrates the us
 
 ## Demo
 https://youtu.be/_7Eacx_FXNo
+
+## Play Store
+This also serves as the origin of "Cc Notes". An app I released on Play Store. Check here if you're interested: https://play.google.com/store/apps/details?id=dev.carlodips.notes_compose
